@@ -1,0 +1,27 @@
+{
+  "name": "nx test place",
+  "emitLegacyScripts": false,
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "nx": {
+        "$path": "src"
+      },
+
+      "client": {
+        "$path": "test/client"
+      }
+    },
+
+    "ServerScriptService": {
+      "server": {
+        "$className": "Actor",
+
+        "server": {
+          "$path": "test/server"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "emitLegacyScripts": false,
+  "tree": {
+    "$path": "src"
+  }
+}
