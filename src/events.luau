@@ -114,7 +114,14 @@ function events.server(node: vdom.Node, events_shims: { [string]: EventShim<unkn
 end
 
 --[=[
-Defines a shim for an event
+Defines a shim for an event, which allows for communication back to the host who
+generated the UI.
+
+It is important to note that you cannot send nil values over the network.
+There's also a restriction at the moment that prevents you from firing more than
+once per diff. This limitation may be removed in the future.
+
+@param serde Interface for serializing a single value if desired. By default, no serde will happen.
 ]=]
 function events.event<T>(serde: SerdeNoDiff<T>?): EventShim<T>
 	return {
