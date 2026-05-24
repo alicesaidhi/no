@@ -1,11 +1,11 @@
 {
-  "name": "nx test place",
+  "name": "no test place",
   "emitLegacyScripts": false,
   "tree": {
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "nx": {
+      "no": {
         "$path": "src"
       },
 

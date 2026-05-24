@@ -1,10 +1,10 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
-local nx = require("@game/ReplicatedStorage/nx")
-local widget_registrar = require("./nx/widget_registrar")
+local no = require("@game/ReplicatedStorage/no")
+local widget_registrar = require("./no/widget_registrar")
 
-local screengui_widget = nx.widget("screengui", {}, nx.empty_serde)
+local screengui_widget = no.widget("screengui", {}, no.empty_serde)
 local screengui = screengui_widget.construct(function(props: nil, scope, events)
 	return nil, nil
 end, function(scope, events, parent)
@@ -19,7 +19,7 @@ end, function(scope, events, parent)
 	return screengui, nil
 end)
 
-local label_widget = nx.widget("label", {}, (nil :: any) :: nx.Serde<string>)
+local label_widget = no.widget("label", {}, (nil :: any) :: no.Serde<string>)
 local label = label_widget.construct(function(props: string, scope, events)
 	return props, nil
 end, function(scope, events, parent)
@@ -42,9 +42,9 @@ end, function(scope, events, parent)
 	return label, nil
 end)
 
-local button_widget = nx.widget("button", {
-	clicked = nx.event(),
-}, (nil :: any) :: nx.Serde<string>)
+local button_widget = no.widget("button", {
+	clicked = no.event(),
+}, (nil :: any) :: no.Serde<string>)
 local button = button_widget.construct(function(props: string, scope, events)
 	local clicked = if events.clicked:poll() then true else false
 	return props, { clicked = clicked }
@@ -72,8 +72,8 @@ end, function(scope, events, parent)
 	return button, nil
 end)
 
-local root = nx.scope({ label = label, button = button, screengui = screengui })
-local target = nx.target(Players.LocalPlayer.PlayerGui)
+local root = no.scope({ label = label, button = button, screengui = screengui })
+local target = no.target(Players.LocalPlayer.PlayerGui)
 
 -- get_state: <T>(T?) -> (T, (T) -> ()),
 
@@ -81,14 +81,14 @@ local s = os.clock()
 local pending_diff: any
 
 RunService.PostSimulation:Connect(function()
-	nx.set_client_fired_events(root, pending_diff)
+	no.set_client_fired_events(root, pending_diff)
 	local _, scope = root:screengui("meow")
 	if scope:button("evil", "meow").clicked then
 		print("meow")
 	end
 
-	local delta = nx.get_diff_delta(root)
-	nx.apply_diff(target, delta)
-	pending_diff = nx.get_client_fired_events(target)
+	local delta = no.get_diff_delta(root)
+	no.apply_diff(target, delta)
+	pending_diff = no.get_client_fired_events(target)
 	print(pending_diff)
 end)

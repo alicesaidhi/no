@@ -122,10 +122,10 @@ local callback_functions: vdom.NodeCallbacks = {
 
 -- api
 
-local nx = {}
+local no = {}
 
-nx.widget = widget_registrar.register
-nx.empty_serde = {
+no.widget = widget_registrar.register
+no.empty_serde = {
 	read = function()
 		return nil
 	end,
@@ -134,7 +134,7 @@ nx.empty_serde = {
 	end,
 } :: Serde<nil>
 
-function nx.target(parent: Instance)
+function no.target(parent: Instance)
 	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {} }
 	dense_count += 1
 
@@ -149,11 +149,11 @@ function nx.target(parent: Instance)
 	return root
 end
 
--- function nx.get_diff_full(scope: widget_registrar.WriteScopeBase): vdom.NodeDiff
+-- function no.get_diff_full(scope: widget_registrar.WriteScopeBase): vdom.NodeDiff
 -- 	assert(scope.parent.type == "vdom", "cannot get diff of a node that isn't the vdom")
 -- end
 
-function nx.get_diff_delta(scope: widget_registrar.WriteScopeBase): vdom.NodeDiff?
+function no.get_diff_delta(scope: widget_registrar.WriteScopeBase): vdom.NodeDiff?
 	assert(scope.parent.type == "vdom", "cannot get diff of a node that isn't the vdom")
 
 	debug.profilebegin("generate diff delta")
@@ -168,7 +168,7 @@ function nx.get_diff_delta(scope: widget_registrar.WriteScopeBase): vdom.NodeDif
 	return if is_diff then diff else nil
 end
 
-function nx.apply_diff(target: vdom.Node, diff: vdom.NodeDiff?)
+function no.apply_diff(target: vdom.Node, diff: vdom.NodeDiff?)
 	if not diff then
 		return
 	end
@@ -178,17 +178,17 @@ function nx.apply_diff(target: vdom.Node, diff: vdom.NodeDiff?)
 	debug.profileend()
 end
 
-function nx.get_client_fired_events(target: vdom.Node)
+function no.get_client_fired_events(target: vdom.Node)
 	return vdom.collect_state_as_events(target)
 end
 
-function nx.set_client_fired_events(root: widget_registrar.WriteScopeBase, diff: vdom.NodeDiff?)
+function no.set_client_fired_events(root: widget_registrar.WriteScopeBase, diff: vdom.NodeDiff?)
 	root.incoming_diff = diff
 end
 
-nx.event = events.event
+no.event = events.event
 
-nx.scope = function(main, ...)
+no.scope = function(main, ...)
 	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {} }
 	local diff: vdom.NodeDiff = { children = {} }
 
@@ -212,4 +212,4 @@ end :: <A, B, C, D, E, F, G>(
 	G?
 ) -> Combine<widget_registrar.WriteScopeBase, A, B, C, D, E, F, G>
 
-return nx
+return no
