@@ -21,7 +21,7 @@ return function(target)
 			scope:label("key", "hello!!!!!")
 		end
 		do
-			local _, scope = root:window("window2", {
+			local window, scope = root:window("window2", {
 				title = "Window",
 				w = 200,
 				h = 300,

@@ -11,7 +11,7 @@ export type EventShim<T> = {
 }
 
 export type EventServer<T> = {
-	poll: (EventServer<T>) -> (T) -> (),
+	poll: (EventServer<T>) -> T,
 }
 
 export type EventClient<T> = {

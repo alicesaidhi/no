@@ -13,7 +13,8 @@ local window = widget_registrar.register("nx_window", {
 }, (nil :: any) :: widget_registrar.Serde<Properties>)
 
 return window.construct(function(props: Properties, scope, events)
-	return props, { closed = events.close:poll() }
+	local closed = events.close:poll()
+	return props, { closed = closed }
 end, function(scope, events, parent)
 	local w: number, h: number
 

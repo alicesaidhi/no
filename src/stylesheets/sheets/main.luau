@@ -168,7 +168,7 @@ return define_styles.sheet({
 					}),
 				}),
 
-				rule("ImageButton :pressed")({
+				rule("ImageButton :press")({
 					BackgroundColor3 = Color3.fromHex("#ffffff"),
 					BackgroundTransparency = 0.9,
 
