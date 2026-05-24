@@ -1,3 +1,5 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local define_styles = require("@self/define_styles")
 local parser = require("@self/parser")
 
@@ -18,5 +20,14 @@ function stylesheets.link(target: Instance)
 end
 
 stylesheets.define_styles = define_styles
+
+for _, sheet in script.sheets:GetChildren() do
+	local stylesheet = (require :: any)(sheet)
+	if typeof(stylesheet) == "Instance" and stylesheet:IsA("StyleSheet") then
+		stylesheet.Archivable = false
+		stylesheet.Parent = ReplicatedStorage
+		stylesheets.append_sheet(stylesheet)
+	end
+end
 
 return stylesheets

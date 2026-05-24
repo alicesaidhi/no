@@ -55,7 +55,13 @@ local function remove_node(node: vdom.Node)
 	local last = dense_count
 	local last_node = map_dense_to_node[last]
 
-	cleanup(map_dense_to_dumpster[dense])
+	if dense == nil then
+		return
+	end
+
+	if map_dense_to_dumpster[dense] then
+		cleanup(map_dense_to_dumpster[dense])
+	end
 
 	map_dense_to_node[dense] = map_dense_to_node[last]
 	map_dense_to_emitted[dense] = map_dense_to_emitted[last]
@@ -96,9 +102,9 @@ local callback_functions: vdom.NodeCallbacks = {
 		map_dense_to_node[dense] = child
 		map_dense_to_dumpster[dense] = {}
 
-		local emitted =
+		local emitted, parent =
 			widget.emit(scope :: any, events.client(child, widget.events_template), map_dense_to_emitted[dense_parent])
-		map_dense_to_emitted[dense] = emitted
+		map_dense_to_emitted[dense] = parent or emitted
 	end,
 	destroyed = function(parent, child, key)
 		remove_node(child)
@@ -152,7 +158,19 @@ function no.target(parent: Instance)
 	map_dense_to_props_updated[dense] = function() end
 	map_dense_to_emitted[dense] = parent
 
+	stylesheets.link(parent)
+
 	return root
+end
+
+function no.destroy_node(node: vdom.Node)
+	remove_node(map_dense_to_node[dense_count])
+end
+
+function no.clear_all()
+	while dense_count > 0 do
+		remove_node(map_dense_to_node[dense_count])
+	end
 end
 
 --[=[
@@ -270,5 +288,11 @@ no.compress = vdom.compress
 no.decompress = vdom.decompress
 
 no.stylesheets = stylesheets
+
+no.base = {
+	label = require("@self/components/label"),
+	header = require("@self/components/header"),
+	window = require("@self/components/window"),
+}
 
 return no

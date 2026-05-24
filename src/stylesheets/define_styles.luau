@@ -9,7 +9,58 @@ type Transition<Property> = {
 	delay_time: number?,
 }
 
+type Indexer<Property> = Transition<Property> | Rule
+
 type Property<T> = T | nil
+
+type UnknownConnectCallback = (...any) -> ()
+
+type Signal = RBXScriptSignal
+
+type function get_connect(v: type): type?
+	local connect = v:readproperty(types.singleton("Connect"))
+
+	if connect and connect:is("function") then
+		local head = connect:parameters().head
+
+		if not head then
+			return nil
+		end
+		local callback = head[2]
+
+		if callback and callback:is("function") then
+			return callback
+		end
+	end
+
+	return nil
+end
+
+type function is_signal(v: type): type?
+	if v == Signal and v.tag == "class" then
+		return UnknownConnectCallback
+	-- luau lsp types RBXScriptSignals as tables
+	elseif v.tag == "table" then
+		local connect = get_connect(v)
+
+		if connect then
+			return connect
+		end
+
+		-- i cba to test if this is needed or not
+		local metatable = v:metatable()
+
+		if metatable then
+			connect = get_connect(metatable)
+
+			if connect then
+				return connect
+			end
+		end
+	end
+
+	return nil
+end
 
 export type function GetInstanceProperties(t: type): type
 	if t.tag == "union" then
@@ -38,7 +89,7 @@ export type function GetInstanceProperties(t: type): type
 			end
 		end
 
-		main:setindexer(types.number, Transition(types.unionof(unpack(properties))))
+		main:setindexer(types.number, Indexer(types.unionof(unpack(properties))))
 
 		return main
 	elseif t.tag == "extern" then
@@ -56,7 +107,7 @@ export type function GetInstanceProperties(t: type): type
 			for key, value in processing:properties() do
 				if
 					value.read
-					and (value.read.tag == "function" or value.read.tag == "table" or value.read.tag == "extern")
+					and (value.read.tag == "function" or value.read.tag == "table" or is_signal(value.read))
 				then
 					continue
 				end
@@ -74,7 +125,7 @@ export type function GetInstanceProperties(t: type): type
 				end
 			end
 
-			processing = processing:readparent() or processing:writeparent()
+			processing = processing:readparent()
 		end
 
 		main:setindexer(types.number, Transition(types.unionof(unpack(properties))))
@@ -127,35 +178,46 @@ end
 function define_styles.sheet(style_data_array: { StyleData }): StyleSheet
 	local sheet = Instance.new("StyleSheet")
 
+	local function create_rule(style_data: Rule)
+		local rule = Instance.new("StyleRule")
+		rule.Name = style_data.selector
+		local props = {}
+		local transitions = {}
+
+		for key, value in style_data.properties do
+			if type(key) == "string" and type(value) ~= "table" then
+				props[key] = value
+			elseif type(key) == "number" and type(value) == "table" and value.type == "rule" then
+				create_rule(value).Parent = rule
+			elseif type(key) == "number" then
+				print(value)
+				local transition: Transition<any> = value
+				transitions[transition.property] = TweenInfo.new(
+					transition.time,
+					transition.style,
+					transition.direction,
+					0,
+					false,
+					transition.delay_time
+				)
+			end
+		end
+
+		rule.Selector = style_data.selector
+		rule:SetProperties(props)
+		if next(transitions) then
+			rule:SetPropertyTransitions(transitions)
+		end
+		if style_data.priority then
+			rule.Priority = style_data.priority
+		end
+
+		return rule
+	end
+
 	for _, style_data in style_data_array do
 		if style_data.type == "rule" then
-			local rule = Instance.new("StyleRule")
-			local props = {}
-			local transitions = {}
-
-			for key, value in style_data.properties do
-				if type(key) == "string" then
-					props[key] = value
-				elseif type(key) == "number" then
-					local transition: Transition<any> = value
-					transitions[transition.property] = TweenInfo.new(
-						transition.time,
-						transition.style,
-						transition.direction,
-						0,
-						false,
-						transition.delay_time
-					)
-				end
-			end
-
-			rule.Selector = style_data.selector
-			rule:SetProperties(props)
-			rule:SetPropertyTransitions(transitions)
-
-			if style_data.priority then
-				rule.Priority = style_data.priority
-			end
+			local rule = create_rule(style_data)
 
 			rule.Parent = sheet
 		elseif style_data.type == "token" then
