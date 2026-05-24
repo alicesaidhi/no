@@ -5,9 +5,21 @@ local theme = require("./theme")
 local rule = define_styles.rule
 
 return define_styles.sheet({
-	rule("GuiObject")({
+	rule("GuiObject", -10)({
 		BorderSizePixel = 0,
 		BackgroundTransparency = 1,
+	}),
+
+	rule(".container ::UIPadding")({
+		PaddingTop = UDim.new(0, 2),
+		PaddingLeft = UDim.new(0, 2),
+		PaddingRight = UDim.new(0, 2),
+		PaddingBottom = UDim.new(0, 2),
+	}),
+
+	rule(".container ::UIListLayout")({
+		Padding = UDim.new(0, 2),
+		SortOrder = Enum.SortOrder.LayoutOrder,
 	}),
 
 	rule("ScrollingFrame .scrolling")({
@@ -21,40 +33,13 @@ return define_styles.sheet({
 		}),
 	}),
 
-	rule("GuiObject .accent")({
-		BackgroundColor3 = theme.accent(0),
-		BackgroundTransparency = 0,
-
-		rule(">> TextLabel .nx_label")({
-			TextColor3 = theme.accent_text,
-		}),
-
-		rule(">> TextLabel .nx_header")({
-			TextColor3 = theme.accent_text,
-		}),
-
-		rule(".border ::UIStroke")({
-			Color = theme.accent(-2),
-		}),
-	}),
-
-	rule("GuiObject .background")({
-		BackgroundColor3 = theme.background(0),
-		BackgroundTransparency = 0,
-
-		rule(".border ::UIStroke")({
-			Color = theme.background(-2),
-		}),
-	}),
-
 	rule(".border ::UIStroke")({
 		Color = theme.background(-2),
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 	}),
 
-	rule("TextLabel .nx_label")({
+	rule("TextLabel .nx_label, TextButton .nx_label, TextBox .nx_label")({
 		AutomaticSize = Enum.AutomaticSize.XY,
-
-		BackgroundTransparency = 1,
 
 		TextColor3 = theme.text,
 		TextSize = 14,
@@ -64,10 +49,8 @@ return define_styles.sheet({
 		TextWrapped = true,
 	}),
 
-	rule("TextLabel .nx_header")({
+	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header")({
 		AutomaticSize = Enum.AutomaticSize.XY,
-
-		BackgroundTransparency = 1,
 
 		TextColor3 = theme.text,
 		TextSize = 16,
@@ -75,6 +58,34 @@ return define_styles.sheet({
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		TextWrapped = true,
+	}),
+
+	rule("GuiObject .accent")({
+		BackgroundColor3 = theme.accent(0),
+		BackgroundTransparency = 0,
+
+		rule(">> TextLabel .nx_label, >> TextButton .nx_label")({
+			TextColor3 = theme.accent_text,
+		}),
+
+		rule(">> TextLabel .nx_header, >> TextButton .nx_label")({
+			TextColor3 = theme.accent_text,
+		}),
+
+		rule(".border ::UIStroke")({
+			Color = theme.accent(-2),
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		}),
+	}),
+
+	rule("GuiObject .background")({
+		BackgroundColor3 = theme.background(0),
+		BackgroundTransparency = 0,
+
+		rule(".border ::UIStroke")({
+			Color = theme.background(-2),
+			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+		}),
 	}),
 
 	rule(".no_window")({
@@ -98,6 +109,8 @@ return define_styles.sheet({
 			}),
 
 			rule("> GuiObject #children")({
+				Size = UDim2.fromScale(1, 1),
+
 				rule("::UIPadding")({
 					PaddingTop = UDim.new(0, 2),
 					PaddingLeft = UDim.new(0, 2),
@@ -107,6 +120,7 @@ return define_styles.sheet({
 
 				rule("::UIListLayout")({
 					Padding = UDim.new(0, 2),
+					SortOrder = Enum.SortOrder.LayoutOrder,
 				}),
 			}),
 
@@ -184,6 +198,239 @@ return define_styles.sheet({
 				-- rule(":noninteractable")({
 				-- 	TextColor3 = theme.background(-3),
 				-- }),
+			}),
+		}),
+	}),
+
+	rule(".nx_button GuiObject")({
+		Size = UDim2.fromOffset(40, 0),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundColor3 = theme.background(5),
+		BackgroundTransparency = 0,
+
+		rule("TextButton")({
+			AutoButtonColor = false,
+			TextXAlignment = Enum.TextXAlignment.Center,
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 4),
+			PaddingRight = UDim.new(0, 4),
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
+		rule("::UICorner")({
+			CornerRadius = UDim.new(0, 2),
+		}),
+
+		rule("GuiObject :hover")({
+			BackgroundColor3 = theme.background(6),
+		}),
+		rule("GuiObject :press")({
+			BackgroundColor3 = theme.background(3),
+		}),
+
+		rule("GuiObject .accent")({
+			BackgroundColor3 = theme.accent(3),
+
+			rule("GuiObject :hover")({
+				BackgroundColor3 = theme.accent(4),
+			}),
+			rule("GuiObject :press")({
+				BackgroundColor3 = theme.accent(2),
+			}),
+		}),
+	}),
+
+	rule(".nx_textbox TextBox")({
+		Size = UDim2.fromOffset(100, 18),
+		PlaceholderColor3 = theme.subtext,
+		TextWrapped = false,
+
+		AutomaticSize = Enum.AutomaticSize.None,
+		ClipsDescendants = true,
+
+		rule(".background TextBox", 10)({
+			BackgroundColor3 = theme.background(-2),
+		}),
+
+		rule(".accent TextBox", 10)({
+			BackgroundColor3 = theme.accent(-3),
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 2),
+			PaddingRight = UDim.new(0, 2),
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
+		rule("::UICorner")({
+			CornerRadius = UDim.new(0, 2),
+		}),
+
+		rule(".focused ::UIStroke", 100)({
+			Color = theme.accent(0),
+		}),
+
+		rule("TextBox .multiline")({
+			AutomaticSize = Enum.AutomaticSize.Y,
+			MultiLine = true,
+		}),
+	}),
+
+	rule(".separator GuiObject")({
+		Size = UDim2.new(1, 0, 0, 12),
+
+		rule("> TextLabel .nx_label")({
+			Position = UDim2.fromOffset(8, 0),
+			TextColor3 = theme.subtext,
+
+			rule("::UIPadding")({
+				PaddingLeft = UDim.new(0, 4),
+				PaddingRight = UDim.new(0, 4),
+			}),
+		}),
+
+		rule("> #decoration GuiObject")({
+			Position = UDim2.new(0, 0, 0.5, 2),
+			Size = UDim2.new(1, 0, 0, 1),
+			AnchorPoint = Vector2.new(0, 0.5),
+
+			BackgroundColor3 = theme.background(4),
+			BackgroundTransparency = 0,
+		}),
+	}),
+
+	rule(".sameline GuiObject")({
+		AutomaticSize = Enum.AutomaticSize.Y,
+		Size = UDim2.fromScale(1, 0),
+
+		rule("::UIListLayout")({
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 2),
+
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			HorizontalAlignment = Enum.HorizontalAlignment.Left,
+		}),
+	}),
+
+	rule(".nx_checkbox ImageButton")({
+		AutomaticSize = Enum.AutomaticSize.XY,
+
+		Size = UDim2.fromOffset(16, 16),
+
+		rule("::UIListLayout")({
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			Padding = UDim.new(0, 4),
+		}),
+
+		rule("> #icon ImageLabel")({
+			Size = UDim2.fromOffset(12, 12),
+			ScaleType = Enum.ScaleType.Fit,
+			Image = "rbxassetid://100188624502987",
+			ImageTransparency = 1,
+			BackgroundTransparency = 0,
+			BackgroundColor3 = theme.background(-2),
+
+			rule("::UICorner")({
+				CornerRadius = UDim.new(0, 2),
+			}),
+			rule("::UIStroke")({
+				Color = theme.background(-6),
+			}),
+		}),
+
+		rule(":hover > #icon ::UIStroke")({
+			Color = theme.accent(3),
+		}),
+
+		rule(".checked > #icon ImageLabel")({
+			ImageTransparency = 0,
+			BackgroundColor3 = theme.accent(2),
+
+			rule("::UIStroke")({
+				Color = theme.accent(-3),
+			}),
+		}),
+	}),
+
+	rule(".nx_tabs GuiObject")({
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+
+		rule("::UIListLayout")({
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+
+		rule("::UIPadding")({
+			PaddingTop = UDim.new(0, 2),
+		}),
+
+		rule("> GuiObject #tabs")({
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			LayoutOrder = 0,
+			ZIndex = 100,
+
+			rule("::UIListLayout")({
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = UDim.new(0, 1),
+			}),
+		}),
+
+		rule("> GuiObject #container")({
+			Size = UDim2.fromScale(1, 0),
+			LayoutOrder = 1,
+			AutomaticSize = Enum.AutomaticSize.Y,
+		}),
+	}),
+
+	rule(".nx_tab GuiObject")({
+		Size = UDim2.fromOffset(40, 0),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundColor3 = theme.background(2),
+		BackgroundTransparency = 0,
+
+		rule("TextButton")({
+			AutoButtonColor = false,
+			TextXAlignment = Enum.TextXAlignment.Center,
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 4),
+			PaddingRight = UDim.new(0, 4),
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
+		rule("::UICorner")({
+			TopLeftRadius = UDim.new(0, 2),
+			TopRightRadius = UDim.new(0, 2),
+			BottomLeftRadius = UDim.new(0, 0),
+			BottomRightRadius = UDim.new(0, 0),
+		}),
+
+		rule("GuiObject :hover")({
+			BackgroundColor3 = theme.background(3),
+		}),
+		rule("GuiObject :press")({
+			BackgroundColor3 = theme.background(1),
+		}),
+
+		rule(".selected GuiObject")({
+			BackgroundColor3 = theme.accent(0),
+
+			rule("GuiObject :hover")({
+				BackgroundColor3 = theme.accent(1),
+			}),
+			rule("GuiObject :press")({
+				BackgroundColor3 = theme.accent(-1),
 			}),
 		}),
 	}),

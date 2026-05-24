@@ -8,6 +8,8 @@ return function(target)
 
 	local pending_diff: any
 
+	local count = 0
+	local current_tab = "tab 1"
 	local c = RunService.PreRender:Connect(function()
 		no.set_client_fired_events(root, pending_diff)
 
@@ -19,15 +21,25 @@ return function(target)
 			})
 
 			scope:label("key", "hello!!!!!")
-		end
-		do
-			local window, scope = root:window("window2", {
-				title = "Window",
-				w = 200,
-				h = 300,
-			})
+			if scope:button("testing", "increase count").clicked then
+				count += 1
+			end
+			scope:label("count", `count: {count}`)
+			scope:input("input", { placeholder = "meow", text = "" })
+			scope:separator("m", "bleh this sucks!!!")
+			scope:label("count1", `count: {count}`)
+			scope:checkbox("checked", { text = "checked", checked = true })
+			scope:checkbox("unchecked", { text = "unchecked", checked = false })
+			do
+				local tabs, scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })
+				current_tab = tabs.changed_tab or current_tab
 
-			scope:label("key", "hello!!!!!")
+				if current_tab == "tab 1" then
+					scope:label("just", "just testing")
+				elseif current_tab == "tab 2" then
+					scope:label("why", "this is annoying")
+				end
+			end
 		end
 
 		local delta = no.get_diff_delta(root)

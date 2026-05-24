@@ -64,13 +64,44 @@ end
 
 export type function GetInstanceProperties(t: type): type
 	if t.tag == "union" then
-		local components = {}
+		local components: { type } = {}
 
-		for _, component in t:components() do
+		for i, component in t:components() do
 			table.insert(components, GetInstanceProperties(component))
 		end
 
-		return types.unionof(unpack(components))
+		local base = components[1]
+		local properties = {}
+
+		for key, value in base:properties() do
+			local exists = true
+			local write = value.write
+
+			if not write then
+				continue
+			end
+
+			for i = 2, #components do
+				local other = components[i]
+				local other_value = other:readproperty(key)
+				if other_value == nil then
+					exists = false
+					break
+				else
+					write = types.unionof(write, other_value)
+				end
+			end
+
+			if not exists then
+				continue
+			end
+			table.insert(properties, key)
+			base:setproperty(key, write)
+		end
+
+		base:setindexer(types.number, Indexer(types.unionof(unpack(properties))))
+
+		return base
 	elseif t.tag == "intersection" then
 		-- combine both
 		local components = t:components()

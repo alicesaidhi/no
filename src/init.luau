@@ -1,5 +1,6 @@
 --!optimize 2
 local cleanup = require("@self/cleanup")
+local input = require("@self/components/input")
 local events = require("@self/events")
 local stylesheets = require("@self/stylesheets")
 local vdom = require("@self/vdom")
@@ -102,9 +103,16 @@ local callback_functions: vdom.NodeCallbacks = {
 		map_dense_to_node[dense] = child
 		map_dense_to_dumpster[dense] = {}
 
-		local emitted, parent =
+		local emitted, parent_children =
 			widget.emit(scope :: any, events.client(child, widget.events_template), map_dense_to_emitted[dense_parent])
-		map_dense_to_emitted[dense] = parent or emitted
+		emitted.Parent = map_dense_to_emitted[dense_parent]
+		if emitted:IsA("GuiObject") then
+			if emitted:IsPropertyModified("LayoutOrder") == false then
+				emitted.LayoutOrder = child.count
+			end
+		end
+
+		map_dense_to_emitted[dense] = parent_children or emitted
 	end,
 	destroyed = function(parent, child, key)
 		remove_node(child)
@@ -293,6 +301,12 @@ no.base = {
 	label = require("@self/components/label"),
 	header = require("@self/components/header"),
 	window = require("@self/components/window"),
+	button = require("@self/components/basic/button"),
+	input = require("@self/components/input"),
+	separator = require("@self/components/separator"),
+	checkbox = require("@self/components/checkbox"),
+	sameline = require("@self/components/sameline"),
+	tabs = require("@self/components/tabs"),
 }
 
 return no

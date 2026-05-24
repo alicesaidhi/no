@@ -42,7 +42,7 @@ end, function(scope, events, parent)
 
 	local container = create("ScrollingFrame")({
 		Name = "children",
-		tags = { "scrolling" },
+		tags = { "scrolling", "container" },
 	})
 
 	local previous = Vector2.zero
@@ -59,7 +59,6 @@ end, function(scope, events, parent)
 
 	local window: Frame
 	window = create("Frame")({
-		Parent = parent,
 		tags = { "no_window", "background", "border" },
 
 		Name = `window:{scope.key}`,

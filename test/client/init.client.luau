@@ -24,6 +24,7 @@ RunService.PostSimulation:Connect(function()
 			h = 300,
 		})
 
+		scope:button("meow", "testing..")
 		scope:label("key", "hello!!!!!")
 	end
 

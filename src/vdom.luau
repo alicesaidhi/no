@@ -5,6 +5,7 @@ export type Node = {
 	type: string,
 	props: unknown,
 	state: { unknown } | false,
+	count: number,
 
 	children: { [string]: Node? },
 }
@@ -13,10 +14,12 @@ export type NodeDiff = {
 	type: string?,
 	props: unknown,
 	events: { [number]: unknown }?,
+	count: number?,
 
 	children: { [string]: NodeDiff? }?,
 }
 
+local internal_node_count = 0
 function vdom.create_node(parent: Node, parent_diff: NodeDiff, type: string, key: string): (Node, NodeDiff)
 	assert(parent_diff.children, "missing children for parent diff")
 
@@ -28,13 +31,16 @@ function vdom.create_node(parent: Node, parent_diff: NodeDiff, type: string, key
 	if node and node.type ~= type or node == nil then
 		parent_diff.children[key] = diff
 		diff.type = type
+		diff.count = internal_node_count
 
 		node = {
 			type = type,
 			events = nil,
 			state = false,
 			children = {},
+			count = internal_node_count,
 		} :: Node
+		internal_node_count += 1
 		parent.children[key] = node
 	elseif node ~= nil then
 		parent_diff.children[key] = diff
@@ -93,11 +99,13 @@ function vdom.apply_diff(parent: Node, node: Node?, diff: NodeDiff, key: string,
 
 	if node == nil then
 		assert(diff.type, "attempt to modify node that has no type")
+		assert(diff.count, "attempt to modify node that has no count")
 
 		node = {
 			type = diff.type,
 			props = nil,
 			state = false,
+			count = diff.count,
 
 			children = {},
 		} :: Node
@@ -108,6 +116,10 @@ function vdom.apply_diff(parent: Node, node: Node?, diff: NodeDiff, key: string,
 		callbacks.apply_update(node, diff.props)
 		callbacks.created(parent, node :: Node, key)
 		callbacks.props_updated(node)
+	end
+
+	if diff.count and node then
+		node.count = diff.count
 	end
 
 	-- children mounted
@@ -136,6 +148,7 @@ function vdom.generate_diff(node: Node, generate_props_delta: (Node) -> unknown)
 	local diff: NodeDiff = {
 		type = node.type,
 		props = generate_props_delta(node),
+		count = node.count,
 
 		children = {},
 	}
@@ -211,10 +224,11 @@ do
 	local function process(node: NodeDiff)
 		local flags = 0b0000
 
-		flags += if node.children then 0b1000 else 0b0000
-		flags += if node.events then 0b0100 else 0b0000
-		flags += if node.props then 0b0010 else 0b0000
-		flags += if node.type then 0b0001 else 0b0000
+		flags += if node.children then 0b10000 else 0b00000
+		flags += if node.events then 0b01000 else 0b00000
+		flags += if node.props then 0b00100 else 0b00000
+		flags += if node.type then 0b00010 else 0b00000
+		flags += if node.count then 0b00001 else 0b00000
 
 		buffer.writeu8(out, at, flags)
 		at += 1
@@ -246,6 +260,11 @@ do
 		if node.props then
 			at_unknown += 1
 			out_unknown[at_unknown] = node.props
+		end
+
+		if node.count then
+			buffer.writeu32(out, at, node.count)
+			at += 4
 		end
 
 		if node.children then
@@ -299,15 +318,17 @@ do
 		local flags = buffer.readu8(in_b, at)
 		at += 1
 
-		local has_children = bit32.btest(flags, 0b1000)
-		local has_events = bit32.btest(flags, 0b0100)
-		local has_props = bit32.btest(flags, 0b0010)
-		local has_type = bit32.btest(flags, 0b0001)
+		local has_children = bit32.btest(flags, 0b10000)
+		local has_events = bit32.btest(flags, 0b01000)
+		local has_props = bit32.btest(flags, 0b00100)
+		local has_type = bit32.btest(flags, 0b00010)
+		local has_count = bit32.btest(flags, 0b00001)
 
 		local type: string?
 		local children: { [string]: NodeDiff? }?
 		local events: { [number]: unknown }?
 		local props: unknown?
+		local count: number?
 
 		if has_type then
 			local size = buffer.readu8(in_b, at)
@@ -334,6 +355,11 @@ do
 			at_unknown += 1
 		end
 
+		if has_count then
+			count = buffer.readu32(in_b, at)
+			at += 4
+		end
+
 		if has_children then
 			children = {}
 			local total = buffer.readu16(in_b, at)
@@ -352,6 +378,7 @@ do
 			children = children,
 			events = events,
 			props = props,
+			count = count,
 		}
 	end
 

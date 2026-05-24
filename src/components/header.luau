@@ -9,8 +9,6 @@ end, function(scope, events, parent)
 	label.Name = scope.key
 	label:AddTag("nx_header")
 
-	label.Parent = parent
-
 	scope.cleanup(label)
 	scope.on_updated_props(function(value)
 		label.Text = value
