@@ -1,0 +1,12 @@
+[codegen]
+content = true
+typescript = false
+style = "flat"
+
+[creator]
+type = "user"
+id = 1160098333
+
+[inputs.assets]
+path = "assets/{images,audio}/**"
+output_path = "assets"

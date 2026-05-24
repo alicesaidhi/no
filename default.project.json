@@ -1,6 +1,10 @@
 {
   "emitLegacyScripts": false,
   "tree": {
-    "$path": "src"
+    "$path": "src",
+
+    "assets": {
+      "$path": "assets/assets.luau"
+    }
   }
 }

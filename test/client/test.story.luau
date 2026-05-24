@@ -20,6 +20,15 @@ return function(target)
 
 			scope:label("key", "hello!!!!!")
 		end
+		do
+			local _, scope = root:window("window2", {
+				title = "Window",
+				w = 200,
+				h = 300,
+			})
+
+			scope:label("key", "hello!!!!!")
+		end
 
 		local delta = no.get_diff_delta(root)
 		no.apply_diff(target, delta)

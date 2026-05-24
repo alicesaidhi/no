@@ -6,7 +6,7 @@
 
     "ReplicatedStorage": {
       "no": {
-        "$path": "src"
+        "$path": "."
       },
 
       "client": {

@@ -1,6 +1,7 @@
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
+local assets = require("../assets")
 local events = require("../events")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
@@ -24,20 +25,26 @@ end, function(scope, events, parent)
 		Text = "",
 	})
 
-	local close = create("TextButton")({
+	local close = create("ImageButton")({
 		Name = "close",
 
 		LayoutOrder = 1000,
-		Text = "x",
+
+		Activated = function()
+			events.close:fire(true)
+		end,
+
+		create("ImageLabel")({
+			Name = "label",
+		}),
 	})
 
 	local container = create("ScrollingFrame")({
-		Name = "container",
+		Name = "children",
 		tags = { "scrolling" },
 	})
 
-	local dragging = false
-	-- local origin_x, origin_y = 0, 0
+	local previous = Vector2.zero
 
 	-- local c = RunService.Heartbeat:Connect(function(dt)
 	-- 	if not dragging then
@@ -49,7 +56,8 @@ end, function(scope, events, parent)
 	-- 	end
 	-- end)
 
-	local window = create("Frame")({
+	local window: Frame
+	window = create("Frame")({
 		Parent = parent,
 		tags = { "no_window", "background", "border" },
 
@@ -60,6 +68,22 @@ end, function(scope, events, parent)
 			Name = "header",
 			tags = { "border" },
 
+			create("UIDragDetector")({
+				DragStart = function(from: Vector2)
+					previous = from
+				end,
+				DragContinue = function(from: Vector2)
+					local delta = from - previous
+					local current = Vector2.new(window.Position.X.Offset, window.Position.Y.Offset)
+					local new = current + delta
+					previous = from
+					window.Position = UDim2.fromOffset(new.X, new.Y)
+				end,
+				DragEnd = function(from: Vector2)
+					previous = from
+				end,
+			}),
+
 			-- MouseButton1Down = function(x, y)
 			-- 	dragging = true
 			-- end,
@@ -68,7 +92,36 @@ end, function(scope, events, parent)
 			close,
 		}),
 
-		container,
+		create("Frame")({
+			Name = "container",
+
+			container,
+
+			create("ImageLabel")({
+				Name = "resize",
+
+				ImageContent = assets["images/resize_icon.svg"],
+
+				create("UIDragDetector")({
+					DragStyle = Enum.UIDragDetectorDragStyle.Scriptable,
+
+					DragStart = function(from: Vector2)
+						previous = from
+					end,
+					DragContinue = function(from: Vector2)
+						local delta = from - previous
+						local current = Vector2.new(w, h)
+						local new = current + delta
+						previous = from
+						w, h = new.X, new.Y
+						window.Size = UDim2.fromOffset(new.X, new.Y)
+					end,
+					DragEnd = function(from: Vector2)
+						previous = from
+					end,
+				}),
+			}),
+		}),
 	})
 
 	scope.cleanup(window)
