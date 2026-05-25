@@ -153,7 +153,6 @@ function widget_registrar.register<Events, SerdeType>(
 		widget.emit = emit
 		return function(scope: WriteScopeBase, key: string, props: Props)
 			assert(serde)
-			--todo: make events work
 
 			local node, diff = vdom.create_node(scope.parent, scope.parent_diff, identifier, key)
 			local incoming_diff = scope.incoming_diff
