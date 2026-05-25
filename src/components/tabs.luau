@@ -9,7 +9,7 @@ local tabs = widget_registrar.register("nx_tabs", {
 }, (nil :: any) :: widget_registrar.Serde<Props>)
 
 return tabs.construct(function(props: Props, scope, events)
-	return props, { changed_tab = events.change_tab:poll() :: true? }
+	return props, { changed_tab = (events.change_tab:poll() or false) :: string | false }
 end, function(scope, events)
 	local map_tabs: { [string]: GuiObject } = {}
 

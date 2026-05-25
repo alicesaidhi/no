@@ -1,10 +1,10 @@
 --!optimize 2
 local cleanup = require("@self/cleanup")
-local input = require("@self/components/input")
 local events = require("@self/events")
 local stylesheets = require("@self/stylesheets")
 local vdom = require("@self/vdom")
 local widget_registrar = require("@self/widget_registrar")
+local type_fns = require(script.type_fns)
 
 -- checkbox
 -- label
@@ -15,29 +15,6 @@ local widget_registrar = require("@self/widget_registrar")
 -- plot
 
 export type Serde<T> = widget_registrar.Serde<T>
-
-export type function Combine(root: type, a: type, b: type, c: type, d: type, e: type, f: type, g: type)
-	local function annoying(root: type, ...: type)
-		assert(root.tag == "table")
-		local copy = types.copy(root)
-
-		for i = 1, select("#", ...) do
-			local t: type = select(i, ...)
-			if t.tag ~= "table" then
-				continue
-			end
-
-			for key, value in t:properties() do
-				copy:setreadproperty(key, value.read)
-				copy:setwriteproperty(key, value.write)
-			end
-		end
-
-		return copy
-	end
-
-	return annoying(root, a)
-end
 
 -- we maintain a sparse set internally
 local dense_count = 0
@@ -155,7 +132,7 @@ Creates a root node which can be used as a render target.
 @param parent The instance parent where the UI should be parented under.
 ]=]
 function no.target(parent: Instance)
-	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {} }
+	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {}, count = 0 }
 	dense_count += 1
 
 	local dense = dense_count
@@ -181,12 +158,14 @@ function no.clear_all()
 	end
 end
 
+type WriteScopeBase = widget_registrar.WriteScopeBase
+
 --[=[
 Generates a full diff of the provided scope, which can be sent to a client connecting.
 
 @param scope The scope for which to generate for.
 ]=]
-function no.get_diff_full(scope: widget_registrar.WriteScopeBase): vdom.NodeDiff
+function no.get_diff_full(scope: WriteScopeBase): vdom.NodeDiff
 	assert(scope.parent.type == "vdom", "cannot get diff of a node that isn't the vdom")
 
 	local children: { [string]: vdom.NodeDiff? } = {}
@@ -264,12 +243,11 @@ function no.set_client_fired_events(root: widget_registrar.WriteScopeBase, diff:
 end
 
 no.event = events.event
-
 --[=[
 Creates a new scope which inherits from the provided tables.
 ]=]
 no.scope = function(main, ...)
-	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {} }
+	local root: vdom.Node = { type = "vdom", props = nil, state = false, children = {}, count = 0 }
 	local diff: vdom.NodeDiff = { children = {} }
 
 	local scope: widget_registrar.WriteScopeBase = { parent = root, parent_diff = diff } :: any
@@ -281,7 +259,7 @@ no.scope = function(main, ...)
 		end
 	end
 
-	return setmetatable(scope, { __index = index_mt }) :: any
+	return setmetatable(scope, { __index = index_mt }) :: any, scope
 end :: <A, B, C, D, E, F, G>(
 	A,
 	B?,
@@ -290,7 +268,7 @@ end :: <A, B, C, D, E, F, G>(
 	E?,
 	F?,
 	G?
-) -> Combine<widget_registrar.WriteScopeBase, A, B, C, D, E, F, G>
+) -> (setmetatable<{}, { __index: A }>, widget_registrar.WriteScopeBase)
 
 no.compress = vdom.compress
 no.decompress = vdom.decompress

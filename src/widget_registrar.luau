@@ -1,4 +1,5 @@
 --!optimize 2
+local type_fns = require(script.Parent.type_fns)
 local delta_compress = require("./delta_compress")
 local events = require("./events")
 local vdom = require("./vdom")
@@ -27,6 +28,16 @@ export type EmitScopeBase<Out> = {
 	cleanup: (Instance | RBXScriptConnection | () -> ()) -> (),
 }
 
+type function ObtainNewScope(scope: type, out: type)
+	if scope.tag == "table" and out.tag == "table" then
+		local t = types.newtable(scope:properties())
+		t:setmetatable(types.newtable({ [types.singleton("__index")] = out :: type }))
+		return t
+	else
+		return types.intersectionof(scope, out)
+	end
+end
+
 type WriteFn<Props, Events, SerdeType, Out> = (
 	props: Props,
 	WriteScopeBase,
@@ -38,6 +49,16 @@ type EmitFn<SerdeType, Events> = (
 	parent: Instance
 ) -> (Instance, Instance?)
 
+type setmetatable_<A, B> = setmetatable<A, B>
+
+type function Or(a: type)
+	if a.tag ~= "table" then
+		return types.newtable()
+	else
+		return a
+	end
+end
+
 export type Widget<Events, SerdeType> = {
 	serde: Serde<SerdeType>,
 	emit: EmitFn<SerdeType, Events>,
@@ -46,7 +67,7 @@ export type Widget<Events, SerdeType> = {
 	construct: <Props, Out>(
 		write: WriteFn<Props, Events, SerdeType, Out>,
 		emit: EmitFn<SerdeType, Events>
-	) -> <Scope>(scope: Scope | WriteScopeBase, key: string, props: Props) -> (Out, Scope),
+	) -> <Scope>(scope: Scope, key: string, props: Props) -> setmetatable<Or<Out>, getmetatable<Scope>>,
 }
 
 local default_serde: Serde<any> = {
@@ -147,7 +168,16 @@ function widget_registrar.register<Events, SerdeType>(
 			diff.props = result
 			node.props = serde_out
 
-			return out, base_scope
+			if out and typeof(out) == "table" then
+				for key, value in out :: any do
+					(base_scope :: any)[key] = value
+				end
+				return base_scope
+			elseif typeof(out) == "nil" then
+				return base_scope
+			else
+				error("output of base must be a table or nil")
+			end
 		end
 	end
 

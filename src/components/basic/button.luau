@@ -6,7 +6,7 @@ local button =
 	widget_registrar.register("nx_button", { click = events.event() }, (nil :: any) :: widget_registrar.Serde<string>)
 
 return button.construct(function(props: string, scope, events)
-	return props, { clicked = events.click:poll() }
+	return props, { clicked = events.click:poll() or false }
 end, function(scope, events, parent)
 	local button = create("TextButton")({
 		Name = scope.key,

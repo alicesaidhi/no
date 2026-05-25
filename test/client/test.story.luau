@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 return function(target)
 	local no = require(game.ReplicatedStorage.no)
 
-	local root = no.scope(no.base)
+	local root, main = no.scope(no.base)
 	local target = no.target(target)
 
 	local pending_diff: any
@@ -11,17 +11,19 @@ return function(target)
 	local count = 0
 	local current_tab = "tab 1"
 	local c = RunService.PreRender:Connect(function()
-		no.set_client_fired_events(root, pending_diff)
+		no.set_client_fired_events(main, pending_diff)
 
 		do
-			local _, scope = root:window("window", {
+			local scope = root:window("window", {
 				title = "Window",
 				w = 200,
 				h = 300,
 			})
 
 			scope:label("key", "hello!!!!!")
-			if scope:button("testing", "increase count").clicked then
+			local test = scope:button("testing", "increase count")
+
+			if test.clicked then
 				count += 1
 			end
 			scope:label("count", `count: {count}`)
@@ -30,9 +32,10 @@ return function(target)
 			scope:label("count1", `count: {count}`)
 			scope:checkbox("checked", { text = "checked", checked = true })
 			scope:checkbox("unchecked", { text = "unchecked", checked = false })
+
 			do
-				local tabs, scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })
-				current_tab = tabs.changed_tab or current_tab
+				local scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })
+				current_tab = scope.changed_tab or current_tab
 
 				if current_tab == "tab 1" then
 					scope:label("just", "just testing")
@@ -42,7 +45,12 @@ return function(target)
 			end
 		end
 
-		local delta = no.get_diff_delta(root)
+		local delta = no.get_diff_delta(main)
+
+		if delta then
+			delta = no.decompress(no.compress(delta))
+		end
+
 		no.apply_diff(target, delta)
 		pending_diff = no.get_client_fired_events(target)
 	end)

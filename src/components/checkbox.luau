@@ -12,7 +12,9 @@ local checkbox = widget_registrar.register("nx_checkbox", {
 }, (nil :: any) :: widget_registrar.Serde<Props>)
 
 return checkbox.construct(function(props: { text: string, checked: boolean }, scope, events)
-	return props, { fired = events.toggled:poll() :: true? }
+	return props, {
+		fired = (events.toggled:poll() or false) :: boolean,
+	}
 end, function(scope, events)
 	local checkbox_icon = create("ImageLabel")({
 		Name = "icon",

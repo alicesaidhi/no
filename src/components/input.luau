@@ -26,9 +26,10 @@ return input.construct(
 	)
 		local interface = {}
 
-		interface.new_text = events.text_changed:poll() :: string?
-		interface.focused = events.focused:poll() :: true?
-		interface.focuslost = events.focuslost:poll() :: boolean?
+		interface.new_text = (events.text_changed:poll() or false) :: string | false
+		interface.focused = (events.focused:poll() or false) :: boolean
+		interface.focuslost = (events.focuslost:poll() ~= nil) :: boolean
+		interface.enterpressed = (events.focuslost:poll() == true) :: boolean
 
 		return {
 			text = props.text,
