@@ -11,6 +11,10 @@
 
       "client": {
         "$path": "test/client"
+      },
+
+      "replicate_no": {
+        "$className": "RemoteEvent"
       }
     },
 

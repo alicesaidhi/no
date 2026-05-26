@@ -10,8 +10,13 @@ return function(target)
 
 	local count = 0
 	local current_tab = "tab 1"
-	local c = RunService.PreRender:Connect(function()
+	local values = {}
+	local c = RunService.PreRender:Connect(function(dt)
 		no.set_client_fired_events(main, pending_diff)
+		table.insert(values, dt)
+		if #values > 100 then
+			table.remove(values, 1)
+		end
 
 		do
 			local scope = root:window("window", {
@@ -43,6 +48,14 @@ return function(target)
 					scope:label("why", "this is annoying")
 				end
 			end
+
+			scope:linechart("chart", {
+				values = values,
+				max = 1 / 30,
+				min = 0,
+				y_steps = 1 / 120,
+				metric_unit = "s",
+			})
 		end
 
 		local delta = no.get_diff_delta(main)

@@ -221,7 +221,6 @@ function define_styles.sheet(style_data_array: { StyleData }): StyleSheet
 			elseif type(key) == "number" and type(value) == "table" and value.type == "rule" then
 				create_rule(value).Parent = rule
 			elseif type(key) == "number" then
-				print(value)
 				local transition: Transition<any> = value
 				transitions[transition.property] = TweenInfo.new(
 					transition.time,

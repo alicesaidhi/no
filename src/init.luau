@@ -285,6 +285,7 @@ no.base = {
 	checkbox = require("@self/components/checkbox"),
 	sameline = require("@self/components/sameline"),
 	tabs = require("@self/components/tabs"),
+	linechart = require("@self/components/linechart"),
 }
 
 return no

@@ -99,8 +99,15 @@ type function lex_selector(str: string)
 		return char("0") <= c and c <= char("9")
 	end
 
+	local function is_alpha(c: number)
+		return (char("a") <= c and c <= char("z"))
+			or (char("A") <= c and c <= char("Z"))
+			or c == char("_")
+			or is_digit(c)
+	end
+
 	local function is_alphanumeric(c: number)
-		return (char("a") <= c and c <= char("z")) or (char("A") <= c and c <= char("Z")) or c == char("_")
+		return is_alpha(c) or is_digit(c)
 	end
 
 	local input = buffer.fromstring(str)
@@ -334,7 +341,7 @@ type function lex_selector(str: string)
 
 		while true do
 			skip_whitespace()
-			if is_alphanumeric(peek()) then
+			if is_alpha(peek()) then
 				table.insert(active_selector, parse_class_selector())
 			elseif peek() == char("#") then
 				table.insert(active_selector, parse_name_selector())

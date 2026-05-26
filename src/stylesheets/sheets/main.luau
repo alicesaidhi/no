@@ -1,3 +1,4 @@
+--!nocheck
 local assets = require("../../assets")
 local define_styles = require("../define_styles")
 local theme = require("./theme")
@@ -49,6 +50,17 @@ return define_styles.sheet({
 		TextWrapped = true,
 	}),
 
+	rule("TextLabel .nx_subtext, TextButton .nx_subtext, TextBox .nx_subtext")({
+		AutomaticSize = Enum.AutomaticSize.XY,
+
+		TextColor3 = theme.subtext,
+		TextSize = 10,
+		FontFace = theme.font,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		TextWrapped = true,
+	}),
+
 	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header")({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
@@ -58,6 +70,10 @@ return define_styles.sheet({
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		TextWrapped = true,
+	}),
+
+	rule("TextLabel .nx_mono, TextButton .nx_mono, TextBox .nx_mono")({
+		FontFace = theme.monospace,
 	}),
 
 	rule("GuiObject .accent")({
@@ -110,18 +126,6 @@ return define_styles.sheet({
 
 			rule("> GuiObject #children")({
 				Size = UDim2.fromScale(1, 1),
-
-				rule("::UIPadding")({
-					PaddingTop = UDim.new(0, 2),
-					PaddingLeft = UDim.new(0, 2),
-					PaddingRight = UDim.new(0, 2),
-					PaddingBottom = UDim.new(0, 2),
-				}),
-
-				rule("::UIListLayout")({
-					Padding = UDim.new(0, 2),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-				}),
 			}),
 
 			rule("> ImageLabel #resize")({
@@ -369,6 +373,7 @@ return define_styles.sheet({
 
 		rule("::UIPadding")({
 			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
 		}),
 
 		rule("> GuiObject #tabs")({
@@ -432,6 +437,93 @@ return define_styles.sheet({
 			rule("GuiObject :press")({
 				BackgroundColor3 = theme.accent(-1),
 			}),
+		}),
+	}),
+
+	rule(".arrow_down ImageLabel")({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(0, 0),
+
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
+		}),
+	}),
+	rule(".arrow_left ImageLabel")({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(64, 0),
+
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
+		}),
+	}),
+	rule(".arrow_right ImageLabel")({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(172, 0),
+
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
+		}),
+	}),
+	rule(".arrow_up ImageLabel")({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(128, 0),
+
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
+		}),
+	}),
+
+	rule(".nx_graph GuiObject")({
+		AutomaticSize = Enum.AutomaticSize.X,
+		Size = UDim2.fromOffset(0, 200),
+
+		BackgroundColor3 = theme.background(-1),
+		BackgroundTransparency = 0,
+		ClipsDescendants = true,
+
+		rule("> GuiObject #labels")({
+			LayoutOrder = 0,
+			Visible = false,
+		}),
+
+		rule(".labels > GuiObject #labels")({
+			Size = UDim2.new(0, 40, 1, 0),
+			ZIndex = 100,
+			Visible = true,
+		}),
+
+		rule("> GuiObject #graph")({
+			LayoutOrder = 10,
+			Size = UDim2.new(0, 400, 1, 0),
+
+			rule(">> #path Path2D")({
+				Color3 = theme.text,
+				Closed = false,
+				Thickness = 1,
+				ZIndex = 100,
+			}),
+			rule(">> #lines Path2D")({
+				Color3 = theme.background(8),
+				Closed = false,
+				Thickness = 0.5,
+			}),
+		}),
+
+		rule("::UIListLayout")({
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			FillDirection = Enum.FillDirection.Horizontal,
+		}),
+
+		rule("::UIStroke")({
+			Color = theme.background(-3),
 		}),
 	}),
 })

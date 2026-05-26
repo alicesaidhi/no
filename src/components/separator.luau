@@ -21,7 +21,7 @@ end, function(scope, events, parent)
 		label,
 	})
 
-	scope.cleanup(label)
+	scope.cleanup(separator)
 	scope.on_updated_props(function(value)
 		label.Text = value
 	end)

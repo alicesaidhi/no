@@ -19,6 +19,7 @@ end, function(scope, events)
 		FlexMode = Enum.UIFlexMode.Custom,
 	})
 
+	scope.cleanup(flex)
 	scope.on_updated_props(function(p)
 		flex.GrowRatio = p.grow
 		flex.ShrinkRatio = p.shrink

@@ -62,7 +62,7 @@ end, function(scope, events, parent)
 		tags = { "no_window", "background", "border" },
 
 		Name = `window:{scope.key}`,
-		Position = UDim2.fromOffset(16, 16),
+		Position = UDim2.fromOffset(32, 33),
 
 		create("ImageButton")({
 			Name = "header",
