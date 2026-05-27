@@ -6,6 +6,10 @@ local theme = require("./theme")
 local rule = define_styles.rule
 
 return {
+	rule("ScreenGui", -10)({
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	}),
+
 	rule("GuiObject", -10)({
 		BorderSizePixel = 0,
 		BackgroundTransparency = 1,

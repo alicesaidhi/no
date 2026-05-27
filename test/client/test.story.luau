@@ -51,6 +51,7 @@ return function(target)
 
 			do
 				local scope = scope:collapsible("test", { name = "heartbeat graph", default = false })
+
 				if scope.expanded then
 					scope:linechart("chart", {
 						values = values,
@@ -62,7 +63,16 @@ return function(target)
 				end
 			end
 
-			scope:label("meow", "hi")
+			local tooltip_scope = scope:button("meow", "hi"):tooltip("tooltip", "tooltips")
+			if tooltip_scope.visible then
+				tooltip_scope:linechart("chart", {
+					values = values,
+					max = 1 / 30,
+					min = 0,
+					y_steps = 1 / 120,
+					metric_unit = "s",
+				})
+			end
 		end
 
 		local delta = no.get_diff_delta(main)
