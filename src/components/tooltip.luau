@@ -7,6 +7,8 @@ local widget_registrar = require("../widget_registrar")
 
 local rule = define_styles.rule
 
+local MAX_SIZE = 450
+
 stylesheets.append_sheet({
 	rule(".nx_tooltip GuiObject")({
 		AutomaticSize = Enum.AutomaticSize.XY,
@@ -15,7 +17,7 @@ stylesheets.append_sheet({
 		BackgroundTransparency = 0,
 
 		rule("::UISizeConstraint")({
-			MaxSize = Vector2.new(300, math.huge),
+			MaxSize = Vector2.new(MAX_SIZE, math.huge),
 		}),
 
 		rule("::UIShadow")({
@@ -74,7 +76,14 @@ end, function(scope, events, parent)
 	if nearest_gui_object then
 		local display_thread: thread?
 		local function update_position(x: number, y: number)
-			tooltip.Position = UDim2.fromOffset(x + 16, y + 16)
+			local swap_x = false
+
+			if x + 16 > workspace.CurrentCamera.ViewportSize.X - MAX_SIZE then
+				swap_x = true
+			end
+
+			tooltip.Position = UDim2.fromOffset(if swap_x then x - 16 else x + 16, y + 16)
+			tooltip.AnchorPoint = if swap_x then Vector2.new(1, 0) else Vector2.zero
 		end
 
 		scope.cleanup(nearest_gui_object.MouseEnter:Connect(function(x, y)
