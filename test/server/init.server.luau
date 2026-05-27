@@ -21,7 +21,7 @@ local function player_added(player: Player)
 	connections[player] = RunService.PostSimulation:Connect(function(dt)
 		no.set_client_fired_events(main, diffs[player])
 
-		table.insert(values, dt)
+		table.insert(values, dt + math.random() * 0.001)
 		if #values > 100 then
 			table.remove(values, 1)
 		end
@@ -56,16 +56,34 @@ local function player_added(player: Player)
 					scope:label("why", "this is annoying")
 				end
 			end
+			scope:label("thing", "meowing")
 
-			scope:linechart("chart", {
-				values = values,
-				max = 1 / 30,
-				min = 0,
-				y_steps = 1 / 120,
-				metric_unit = "s",
-			})
+			do
+				local scope = scope:collapsible("test", { name = "heartbeat graph", default = false })
+
+				if scope.expanded then
+					scope:label("timer", `time: {string.format("%.3g ms", dt * 1000)}`)
+					scope:linechart("chart", {
+						values = values,
+						max = 1 / 30,
+						min = 0,
+						y_steps = 1 / 120,
+						metric_unit = "s",
+					})
+				end
+			end
+
+			local tooltip_scope = scope:button("meow", "hi"):tooltip("tooltip", "tooltips")
+			if tooltip_scope.visible then
+				tooltip_scope:linechart("chart", {
+					values = values,
+					max = 1 / 30,
+					min = 0,
+					y_steps = 1 / 120,
+					metric_unit = "s",
+				})
+			end
 		end
-
 		local delta = no.get_diff_delta(main)
 
 		if delta then

@@ -17,12 +17,21 @@ stylesheets.append_sheet({
 			Padding = UDim.new(0, 4),
 		}),
 
+		rule("::UIPadding")({
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
 		rule("> #button ImageButton")({
 			Size = UDim2.new(1, 0, 0, 16),
 
 			BackgroundColor3 = theme.background(3),
 			BackgroundTransparency = 0,
 			AutoButtonColor = false,
+
+			rule("::UICorner")({
+				CornerRadius = UDim.new(0, 1),
+			}),
 
 			rule("GuiObject :hover")({
 				BackgroundColor3 = theme.background(4),
@@ -91,7 +100,7 @@ return collapsible.construct(function(
 	scope,
 	events
 )
-	local expanded, set_expanded = scope.get_state()
+	local expanded, set_expanded = scope.get_state(p.default or false)
 
 	if p.default ~= nil and expanded == nil then
 		expanded = p.default

@@ -124,6 +124,7 @@ local serde: widget_registrar.Serde<Props> = {
 			end
 
 			buffer.writeu8(b, offset, REPLACE_GRAPH)
+			offset += 1
 
 			for i, value in new.values do
 				buffer.writef64(b, offset + (i - 1) * 8, value)
@@ -175,7 +176,9 @@ local serde: widget_registrar.Serde<Props> = {
 								end
 							end
 
-							if matching then
+							if matching and i == len then
+								return INSERT_VALUE_AT_END, 0
+							elseif matching then
 								return INSERT_VALUE_AT_END_REMOVE_VALUE_AT_START, i + 1
 							end
 						end

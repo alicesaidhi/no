@@ -48,11 +48,13 @@ return function(target)
 					scope:label("why", "this is annoying")
 				end
 			end
+			scope:label("thing", "meowing")
 
 			do
 				local scope = scope:collapsible("test", { name = "heartbeat graph", default = false })
 
 				if scope.expanded then
+					scope:label("timer", `time: {string.format("%.3g ms", dt * 1000)}`)
 					scope:linechart("chart", {
 						values = values,
 						max = 1 / 30,

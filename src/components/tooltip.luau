@@ -67,6 +67,8 @@ end, function(scope, events, parent)
 	local folder = create("ScreenGui")({
 		Name = scope.key,
 		Enabled = false,
+		IgnoreGuiInset = true,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 
 		tooltip,
 	})

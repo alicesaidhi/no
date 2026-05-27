@@ -16,11 +16,6 @@ stylesheets.append_sheet({
 			SortOrder = Enum.SortOrder.LayoutOrder,
 		}),
 
-		rule("::UIPadding")({
-			PaddingTop = UDim.new(0, 4),
-			PaddingBottom = UDim.new(0, 4),
-		}),
-
 		rule("> GuiObject #border")({
 			Size = UDim2.new(1, 0, 0, 1),
 
