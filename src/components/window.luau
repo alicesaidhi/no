@@ -58,6 +58,10 @@ stylesheets.append_sheet({
 				AutoButtonColor = false,
 			}),
 
+			rule("GuiObject .accent")({
+				BackgroundColor3 = theme.accent(0),
+			}),
+
 			rule("::UIListLayout")({
 				SortOrder = Enum.SortOrder.LayoutOrder,
 				VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -68,7 +72,7 @@ stylesheets.append_sheet({
 			}),
 
 			rule("::UIPadding")({
-				PaddingLeft = UDim.new(0, 2),
+				PaddingLeft = UDim.new(0, 4),
 				PaddingRight = UDim.new(0, 2),
 			}),
 

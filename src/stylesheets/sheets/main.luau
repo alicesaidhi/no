@@ -21,7 +21,7 @@ return {
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		CanvasSize = UDim2.new(),
 
-		ScrollBarThickness = 6,
+		ScrollBarThickness = 4,
 
 		rule("ScrollingFrame .horizontal")({
 			AutomaticCanvasSize = Enum.AutomaticSize.X,
