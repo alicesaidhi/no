@@ -1,6 +1,58 @@
-local events = require("../events")
+local stylesheets = require("../stylesheets")
+local define_styles = require("../stylesheets/define_styles")
+local theme = require("../stylesheets/sheets/theme")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
+
+local rule = define_styles.rule
+
+stylesheets.append_sheet({
+	rule(".nx_graph GuiObject")({
+		AutomaticSize = Enum.AutomaticSize.X,
+		Size = UDim2.fromOffset(0, 200),
+
+		BackgroundColor3 = theme.background(-1),
+		BackgroundTransparency = 0,
+		ClipsDescendants = true,
+
+		rule("> GuiObject #labels")({
+			LayoutOrder = 0,
+			Visible = false,
+		}),
+
+		rule(".labels > GuiObject #labels")({
+			Size = UDim2.new(0, 40, 1, 0),
+			ZIndex = 100,
+			Visible = true,
+		}),
+
+		rule("> GuiObject #graph")({
+			LayoutOrder = 10,
+			Size = UDim2.new(0, 400, 1, 0),
+
+			rule(">> #path Path2D")({
+				Color3 = theme.text,
+				Closed = false,
+				Thickness = 1,
+				ZIndex = 100,
+			}),
+			rule(">> #lines Path2D")({
+				Color3 = theme.background(8),
+				Closed = false,
+				Thickness = 0.5,
+			}),
+		}),
+
+		rule("::UIListLayout")({
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			FillDirection = Enum.FillDirection.Horizontal,
+		}),
+
+		rule("::UIStroke")({
+			Color = theme.background(-3),
+		}),
+	}),
+})
 
 type Props = {
 	metric_unit: string?,
@@ -15,8 +67,6 @@ type Props = {
 local REPLACE_GRAPH = 0
 local INSERT_VALUE_AT_END = 1
 local INSERT_VALUE_AT_END_REMOVE_VALUE_AT_START = 2
-local INSERT_VALUE_AT_START = 3
-local INSERT_VALUE_AT_START_REMOVE_VALUE_AT_END = 4
 local DO_NOTHING = 5
 
 local serde: widget_registrar.Serde<Props> = {
@@ -84,13 +134,10 @@ local serde: widget_registrar.Serde<Props> = {
 			local flags = 0b00000
 			local flags_changed = 0b00000
 
-			local function analyze(new: { number }, old: { number }): number
+			local function analyze(new: { number }, old: { number }): (number, number)
 				if new == old then
-					return DO_NOTHING
+					return DO_NOTHING, 0
 				end
-
-				local inserting_at_end = false
-				local removing_at_start = false
 
 				-- first analyze if the contents are the same except for end
 				if #new > #old then
@@ -103,16 +150,16 @@ local serde: widget_registrar.Serde<Props> = {
 					end
 
 					if can_optimize then
-						return INSERT_VALUE_AT_END
+						return INSERT_VALUE_AT_END, 0
 					else
-						return REPLACE_GRAPH
+						return REPLACE_GRAPH, 0
 					end
 				elseif #new == #old then
 					-- check how long it takes before we are in familiar territory
 
 					-- case 0: is length of new long enough for it to be worth inserting / popping
 					if #new < 8 then
-						return REPLACE_GRAPH
+						return REPLACE_GRAPH, 0
 					end
 
 					-- case 1: check if the value is pushed at the end, some values at the start might be discarded. from there, assume all values are the same.
@@ -134,9 +181,9 @@ local serde: widget_registrar.Serde<Props> = {
 						end
 					end
 
-					return REPLACE_GRAPH
+					return REPLACE_GRAPH, 0
 				else
-					return REPLACE_GRAPH
+					return REPLACE_GRAPH, 0
 				end
 			end
 
@@ -168,7 +215,7 @@ local serde: widget_registrar.Serde<Props> = {
 				+ (if new.max ~= old.max then 8 else 0)
 				+ (if new.x_steps ~= new.x_steps then 8 else 0)
 				+ (if new.y_steps ~= old.y_steps then 8 else 0)
-				+ (if new.metric_unit ~= old.metric_unit then 1 + #new.metric_unit else 0)
+				+ (if new.metric_unit ~= old.metric_unit and new.metric_unit then 1 + #new.metric_unit else 0)
 				+ size_values * 8
 				+ 3
 			local offset = 0
@@ -188,7 +235,7 @@ local serde: widget_registrar.Serde<Props> = {
 				offset += 8
 			end
 
-			if new.x_step and new.x_steps ~= old.x_steps then
+			if new.x_steps and new.x_steps ~= old.x_steps then
 				buffer.writef64(b, offset, new.x_steps)
 				offset += 8
 			end
@@ -238,7 +285,7 @@ local serde: widget_registrar.Serde<Props> = {
 	end,
 
 	read = function(diff: buffer, old)
-		old = old or { values = {} }
+		old = old or { values = {} } :: never
 
 		local len = buffer.len(diff)
 		local offset = 0

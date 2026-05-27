@@ -1,6 +1,55 @@
 local events = require("../events")
+local stylesheets = require("../stylesheets")
+local define_styles = require("../stylesheets/define_styles")
+local theme = require("../stylesheets/sheets/theme")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
+
+local rule = define_styles.rule
+
+stylesheets.append_sheet({
+	rule(".nx_checkbox ImageButton")({
+		AutomaticSize = Enum.AutomaticSize.XY,
+
+		Size = UDim2.fromOffset(16, 16),
+
+		rule("::UIListLayout")({
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			Padding = UDim.new(0, 4),
+		}),
+
+		rule("> #icon ImageLabel")({
+			Size = UDim2.fromOffset(12, 12),
+			ScaleType = Enum.ScaleType.Fit,
+			Image = "rbxassetid://100188624502987",
+			ImageTransparency = 1,
+			BackgroundTransparency = 0,
+			BackgroundColor3 = theme.background(-2),
+
+			rule("::UICorner")({
+				CornerRadius = UDim.new(0, 2),
+			}),
+			rule("::UIStroke")({
+				Color = theme.background(-6),
+			}),
+		}),
+
+		rule(":hover > #icon ::UIStroke")({
+			Color = theme.accent(3),
+		}),
+
+		rule(".checked > #icon ImageLabel")({
+			ImageTransparency = 0,
+			BackgroundColor3 = theme.accent(2),
+
+			rule("::UIStroke")({
+				Color = theme.accent(-3),
+			}),
+		}),
+	}),
+})
 
 type Props = {
 	text: string,

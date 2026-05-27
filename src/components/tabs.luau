@@ -1,6 +1,90 @@
 local events = require("../events")
+local stylesheets = require("../stylesheets")
+local define_styles = require("../stylesheets/define_styles")
+local theme = require("../stylesheets/sheets/theme")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
+
+local rule = define_styles.rule
+
+stylesheets.append_sheet({
+	rule(".nx_tabs GuiObject")({
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+
+		rule("::UIListLayout")({
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+
+		rule("::UIPadding")({
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
+		rule("> GuiObject #tabs")({
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			LayoutOrder = 0,
+			ZIndex = 100,
+
+			rule("::UIListLayout")({
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = UDim.new(0, 1),
+			}),
+		}),
+
+		rule("> GuiObject #container")({
+			Size = UDim2.fromScale(1, 0),
+			LayoutOrder = 1,
+			AutomaticSize = Enum.AutomaticSize.Y,
+		}),
+	}),
+
+	rule(".nx_tab GuiObject")({
+		Size = UDim2.fromOffset(40, 0),
+		AutomaticSize = Enum.AutomaticSize.XY,
+		BackgroundColor3 = theme.background(2),
+		BackgroundTransparency = 0,
+
+		rule("TextButton")({
+			AutoButtonColor = false,
+			TextXAlignment = Enum.TextXAlignment.Center,
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 4),
+			PaddingRight = UDim.new(0, 4),
+			PaddingTop = UDim.new(0, 2),
+			PaddingBottom = UDim.new(0, 2),
+		}),
+
+		rule("::UICorner")({
+			TopLeftRadius = UDim.new(0, 2),
+			TopRightRadius = UDim.new(0, 2),
+			BottomLeftRadius = UDim.new(0, 0),
+			BottomRightRadius = UDim.new(0, 0),
+		}),
+
+		rule("GuiObject :hover")({
+			BackgroundColor3 = theme.background(3),
+		}),
+		rule("GuiObject :press")({
+			BackgroundColor3 = theme.background(1),
+		}),
+
+		rule(".selected GuiObject")({
+			BackgroundColor3 = theme.accent(0),
+
+			rule("GuiObject :hover")({
+				BackgroundColor3 = theme.accent(1),
+			}),
+			rule("GuiObject :press")({
+				BackgroundColor3 = theme.accent(-1),
+			}),
+		}),
+	}),
+})
 
 type Props = { visible: string?, options: { string } }
 

@@ -169,7 +169,7 @@ export type function GetInstanceProperties(t: type): type
 	end
 end
 
-type Rule = {
+export type Rule = {
 	type: "rule",
 
 	selector: string,
@@ -177,14 +177,14 @@ type Rule = {
 	priority: number?,
 }
 
-type Token = {
+export type Token = {
 	type: "token",
 
 	name: string,
 	value: any,
 }
 
-type StyleData = Rule | Token
+export type StyleData = Rule | Token
 
 function define_styles.rule<Selector>(selector: Selector | "", priority: number?)
 	return function(properties: GetInstanceProperties<parser.get_instance_type<Selector>>): Rule
