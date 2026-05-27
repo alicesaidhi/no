@@ -9,6 +9,7 @@ return function(target)
 	local pending_diff: any
 
 	local count = 0
+	local slider_count = 0
 	local current_tab = "tab 1"
 	local c = RunService.PreRender:Connect(function()
 		no.set_client_fired_events(main, pending_diff)
@@ -32,6 +33,10 @@ return function(target)
 			scope:label("count1", `count: {count}`)
 			scope:checkbox("checked", { text = "checked", checked = true })
 			scope:checkbox("unchecked", { text = "unchecked", checked = false })
+
+			local slider = scope:slider("sliderrr", { min = 0, max = 50, step = 10, value = slider_count })
+			scope:label("slider_value", `slider: {slider.value}`)
+			slider_count = slider.value
 
 			do
 				local scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })

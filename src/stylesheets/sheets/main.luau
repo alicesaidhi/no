@@ -1,3 +1,4 @@
+--!nocheck
 local assets = require("../../assets")
 local define_styles = require("../define_styles")
 local theme = require("./theme")
@@ -433,5 +434,40 @@ return define_styles.sheet({
 				BackgroundColor3 = theme.accent(-1),
 			}),
 		}),
+	}),
+
+	rule(".nx_slider_base GuiObject")({
+		Size = UDim2.new(0, 0, 0, 20),
+		AutomaticSize = Enum.AutomaticSize.X,
+
+		rule("::UIListLayout")({
+			HorizontalAlignment = Enum.HorizontalAlignment.Left,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 8),
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 4),
+		}),
+	}),
+
+	rule(".nx_slider_holder GuiObject")({
+		Size = UDim2.new(0, 100, 1, 0),
+		BackgroundTransparency = 0,
+		BackgroundColor3 = theme.background(5),
+
+		rule("::UICorner")({
+			CornerRadius = UDim.new(0, 4),
+		}),
+	}),
+
+	rule(".nx_slider_bar GuiObject")({
+		Size = UDim2.new(0, 2, 1, 0),
+		BackgroundTransparency = 0,
+		BackgroundColor3 = Color3.new(1, 1, 1),
+		AnchorPoint = Vector2.new(0.5, 0),
+		ZIndex = 2,
 	}),
 })

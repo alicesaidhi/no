@@ -285,6 +285,7 @@ no.base = {
 	checkbox = require("@self/components/checkbox"),
 	sameline = require("@self/components/sameline"),
 	tabs = require("@self/components/tabs"),
+    slider = require("@self/components/slider"),
 }
 
 return no
