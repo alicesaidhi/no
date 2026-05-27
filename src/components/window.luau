@@ -31,6 +31,13 @@ stylesheets.append_sheet({
 
 			rule("> GuiObject #children")({
 				Size = UDim2.fromScale(1, 1),
+
+				rule("::UIPadding", -10)({
+					PaddingTop = UDim.new(0, 4),
+					PaddingLeft = UDim.new(0, 4),
+					PaddingRight = UDim.new(0, 4),
+					PaddingBottom = UDim.new(0, 4),
+				}),
 			}),
 
 			rule("> ImageLabel #resize")({

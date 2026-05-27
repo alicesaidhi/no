@@ -9,21 +9,15 @@ return {
 	rule("GuiObject", -10)({
 		BorderSizePixel = 0,
 		BackgroundTransparency = 1,
+		AutoLocalize = false,
 	}),
 
-	rule(".container ::UIPadding")({
-		PaddingTop = UDim.new(0, 2),
-		PaddingLeft = UDim.new(0, 2),
-		PaddingRight = UDim.new(0, 2),
-		PaddingBottom = UDim.new(0, 2),
-	}),
-
-	rule(".container ::UIListLayout")({
+	rule(".container ::UIListLayout", -10)({
 		Padding = UDim.new(0, 2),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	}),
 
-	rule("ScrollingFrame .scrolling")({
+	rule("ScrollingFrame .scrolling", -10)({
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		CanvasSize = UDim2.new(),
 
@@ -34,12 +28,12 @@ return {
 		}),
 	}),
 
-	rule(".border ::UIStroke")({
+	rule(".border ::UIStroke", -10)({
 		Color = theme.background(-2),
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 	}),
 
-	rule("TextLabel .nx_label, TextButton .nx_label, TextBox .nx_label")({
+	rule("TextLabel .nx_label, TextButton .nx_label, TextBox .nx_label", -10)({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
 		TextColor3 = theme.text,
@@ -50,7 +44,7 @@ return {
 		TextWrapped = true,
 	}),
 
-	rule("TextLabel .nx_subtext, TextButton .nx_subtext, TextBox .nx_subtext")({
+	rule("TextLabel .nx_subtext, TextButton .nx_subtext, TextBox .nx_subtext", -10)({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
 		TextColor3 = theme.subtext,
@@ -61,7 +55,7 @@ return {
 		TextWrapped = true,
 	}),
 
-	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header")({
+	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header", -10)({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
 		TextColor3 = theme.text,
@@ -72,13 +66,13 @@ return {
 		TextWrapped = true,
 	}),
 
-	rule("TextLabel .nx_mono, TextButton .nx_mono, TextBox .nx_mono")({
+	rule("TextLabel .nx_mono, TextButton .nx_mono, TextBox .nx_mono", -9)({
 		FontFace = theme.monospace,
 	}),
 
-	rule("GuiObject .accent")({
+	rule("GuiObject .accent", -10)({
 		BackgroundColor3 = theme.accent(0),
-		BackgroundTransparency = 0,
+		BackgroundTransparency = 0.1,
 
 		rule(">> TextLabel .nx_label, >> TextButton .nx_label")({
 			TextColor3 = theme.accent_text,
@@ -94,7 +88,7 @@ return {
 		}),
 	}),
 
-	rule("GuiObject .background")({
+	rule("GuiObject .background", -10)({
 		BackgroundColor3 = theme.background(0),
 		BackgroundTransparency = 0,
 
@@ -104,7 +98,7 @@ return {
 		}),
 	}),
 
-	rule(".arrow_down ImageLabel")({
+	rule(".arrow_down ImageLabel", -10)({
 		Size = UDim2.fromScale(1, 1),
 		ImageContent = assets["images/arrow_icons.svg"],
 		ImageRectSize = Vector2.new(64, 64),
@@ -114,7 +108,7 @@ return {
 			AspectRatio = 1,
 		}),
 	}),
-	rule(".arrow_left ImageLabel")({
+	rule(".arrow_right ImageLabel", -10)({
 		Size = UDim2.fromScale(1, 1),
 		ImageContent = assets["images/arrow_icons.svg"],
 		ImageRectSize = Vector2.new(64, 64),
@@ -124,7 +118,7 @@ return {
 			AspectRatio = 1,
 		}),
 	}),
-	rule(".arrow_right ImageLabel")({
+	rule(".arrow_left ImageLabel", -10)({
 		Size = UDim2.fromScale(1, 1),
 		ImageContent = assets["images/arrow_icons.svg"],
 		ImageRectSize = Vector2.new(64, 64),
@@ -134,7 +128,7 @@ return {
 			AspectRatio = 1,
 		}),
 	}),
-	rule(".arrow_up ImageLabel")({
+	rule(".arrow_up ImageLabel", -10)({
 		Size = UDim2.fromScale(1, 1),
 		ImageContent = assets["images/arrow_icons.svg"],
 		ImageRectSize = Vector2.new(64, 64),

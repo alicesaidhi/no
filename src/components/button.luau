@@ -38,13 +38,13 @@ stylesheets.append_sheet({
 		}),
 
 		rule("GuiObject .accent")({
-			BackgroundColor3 = theme.accent(3),
+			BackgroundColor3 = theme.accent(0),
 
 			rule("GuiObject :hover")({
-				BackgroundColor3 = theme.accent(4),
+				BackgroundColor3 = theme.accent(1),
 			}),
 			rule("GuiObject :press")({
-				BackgroundColor3 = theme.accent(2),
+				BackgroundColor3 = theme.accent(-2),
 			}),
 		}),
 	}),
@@ -58,7 +58,7 @@ return button.construct(function(props: string, scope, events)
 end, function(scope, events, parent)
 	local button = create("TextButton")({
 		Name = scope.key,
-		tags = { "nx_label", "nx_button", "border" },
+		tags = { "nx_label", "nx_button", "border", "accent" },
 
 		Activated = function()
 			events.click:fire(true)

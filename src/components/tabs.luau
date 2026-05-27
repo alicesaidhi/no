@@ -17,8 +17,15 @@ stylesheets.append_sheet({
 		}),
 
 		rule("::UIPadding")({
-			PaddingTop = UDim.new(0, 2),
-			PaddingBottom = UDim.new(0, 2),
+			PaddingTop = UDim.new(0, 4),
+			PaddingBottom = UDim.new(0, 4),
+		}),
+
+		rule("> GuiObject #border")({
+			Size = UDim2.new(1, 0, 0, 1),
+
+			BackgroundColor3 = theme.background(-2),
+			BackgroundTransparency = 0,
 		}),
 
 		rule("> GuiObject #tabs")({
@@ -36,8 +43,13 @@ stylesheets.append_sheet({
 
 		rule("> GuiObject #container")({
 			Size = UDim2.fromScale(1, 0),
-			LayoutOrder = 1,
+			LayoutOrder = 10,
 			AutomaticSize = Enum.AutomaticSize.Y,
+
+			rule("::UIPadding")({
+				PaddingTop = UDim.new(0, 2),
+				PaddingBottom = UDim.new(0, 4),
+			}),
 		}),
 	}),
 
@@ -103,7 +115,7 @@ end, function(scope, events)
 
 	local instances = create("Frame")({
 		Name = "container",
-		tags = { "container", "border", "background" },
+		tags = { "container", "background" },
 	})
 
 	local function create_tab(name: string)
@@ -129,7 +141,18 @@ end, function(scope, events)
 		tags = { "nx_tabs" },
 
 		tabs,
+
+		create("Frame")({
+			Name = "border",
+			LayoutOrder = 1,
+		}),
+
 		instances,
+
+		create("Frame")({
+			Name = "border",
+			LayoutOrder = 20,
+		}),
 	})
 
 	scope.cleanup(tabs)
