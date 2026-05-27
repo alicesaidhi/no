@@ -9,7 +9,7 @@ local widget_registrar = require("../widget_registrar")
 local rule = define_styles.rule
 
 stylesheets.append_sheet({
-	rule(".no_window")({
+	rule(".nx_window")({
 
 		rule("::UIListLayout")({
 			SortOrder = Enum.SortOrder.LayoutOrder,
@@ -165,7 +165,7 @@ end, function(scope, events, parent)
 
 	local window: Frame
 	window = create("Frame")({
-		tags = { "no_window", "background", "border" },
+		tags = { "nx_window", "background", "border" },
 
 		Name = `window:{scope.key}`,
 		Position = UDim2.fromOffset(32, 33),
