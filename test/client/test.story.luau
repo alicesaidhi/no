@@ -9,6 +9,7 @@ return function(target)
 	local pending_diff: any
 
 	local count = 0
+	local slider_count = 5
 	local current_tab = "tab 1"
 	local values = {}
 	local c = RunService.PreRender:Connect(function(dt)
@@ -38,6 +39,14 @@ return function(target)
 			scope:checkbox("checked", { text = "checked", checked = true })
 			scope:checkbox("unchecked", { text = "unchecked", checked = false })
 			scope:dropdown("dropdown", { set_to = "grapejuice", options = { "meow", "grapejuice", "hii" } })
+
+			local slider = scope:slider("slider", { min = 0, max = 50, step = 10, value = slider_count })
+			slider_count = slider.value
+			scope:label("slider_value", `slider: {slider.value}`)
+
+			if scope:button("", "increment").clicked then
+				slider_count += 1
+			end
 
 			do
 				local scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })

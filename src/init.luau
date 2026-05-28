@@ -285,6 +285,7 @@ no.base = {
 	checkbox = require("@self/components/checkbox"),
 	sameline = require("@self/components/sameline"),
 	tabs = require("@self/components/tabs"),
+    slider = require("@self/components/slider"),
 	linechart = require("@self/components/linechart"),
 	collapsible = require("@self/components/collapsible"),
 	tooltip = require("@self/components/tooltip"),
