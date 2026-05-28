@@ -37,6 +37,7 @@ return function(target)
 			scope:label("count1", `count: {count}`)
 			scope:checkbox("checked", { text = "checked", checked = true })
 			scope:checkbox("unchecked", { text = "unchecked", checked = false })
+			scope:dropdown("dropdown", { set_to = "grapejuice", options = { "meow", "grapejuice", "hii" } })
 
 			do
 				local scope = scope:tabs("tabs", { options = { "tab 1", "tab 2" }, visible = current_tab })

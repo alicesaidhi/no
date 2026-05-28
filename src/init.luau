@@ -288,6 +288,7 @@ no.base = {
 	linechart = require("@self/components/linechart"),
 	collapsible = require("@self/components/collapsible"),
 	tooltip = require("@self/components/tooltip"),
+	dropdown = require("@self/components/dropdown"),
 }
 
 return no

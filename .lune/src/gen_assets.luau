@@ -17,7 +17,7 @@ local function gen_assets(upload_target: ("cloud" | "studio")?)
 	process.exec(
 		"asphalt",
 		{ "sync", upload_target },
-		{ stdio = "forward", { ASPHALT_API_KEY = api_key } } :: process.ExecOptions
+		{ stdio = "forward", env = { ASPHALT_API_KEY = api_key } } :: process.ExecOptions
 	)
 
 	fs.writeFile("assets/assets.luau", fs.readFile("assets/assets.luau"):gsub("rbxasset://rbxasset://", "rbxasset://"))
