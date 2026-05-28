@@ -1,3 +1,6 @@
+local stylesheets = require(script.Parent.Parent.stylesheets)
+local define_styles = require(script.Parent.Parent.stylesheets.define_styles)
+local theme = require(script.Parent.Parent.stylesheets.sheets.theme)
 local events = require("../events")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
@@ -8,6 +11,54 @@ type Props = {
 	step: number,
 	value: number,
 }
+
+local rule = define_styles.rule
+
+stylesheets.append_sheet({
+	rule(".nx_slider_base GuiObject")({
+		Size = UDim2.new(0, 0, 0, 20),
+		AutomaticSize = Enum.AutomaticSize.X,
+
+		rule("::UIListLayout")({
+			HorizontalAlignment = Enum.HorizontalAlignment.Left,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			FillDirection = Enum.FillDirection.Horizontal,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 8),
+		}),
+
+		rule("::UIPadding")({
+			PaddingLeft = UDim.new(0, 4),
+		}),
+	}),
+
+	rule(".nx_slider_holder GuiObject")({
+		Size = UDim2.new(0, 100, 1, 0),
+		BackgroundTransparency = 0,
+		BackgroundColor3 = theme.background(5),
+
+		rule("::UICorner")({
+			CornerRadius = UDim.new(0, 4),
+		}),
+
+		rule("TextLabel")({
+			Size = UDim2.fromScale(1, 1),
+            BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center,
+		}),
+	}),
+
+	rule(".nx_slider_bar GuiObject")({
+		Size = UDim2.new(0, 2, 1, 0),
+		BackgroundTransparency = 0,
+		BackgroundColor3 = theme.subtext,
+		AnchorPoint = Vector2.new(0.5, 0),
+		ZIndex = 2,
+	})
+})
 
 local slider = widget_registrar.register("nx_slider", {
 	changed = events.event(),
