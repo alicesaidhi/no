@@ -43,7 +43,7 @@ stylesheets.append_sheet({
 
 		rule("TextLabel")({
 			Size = UDim2.fromScale(1, 1),
-            BackgroundTransparency = 1,
+			BackgroundTransparency = 1,
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			TextXAlignment = Enum.TextXAlignment.Center,
@@ -57,7 +57,7 @@ stylesheets.append_sheet({
 		BackgroundColor3 = theme.subtext,
 		AnchorPoint = Vector2.new(0.5, 0),
 		ZIndex = 2,
-	})
+	}),
 })
 
 local slider = widget_registrar.register("nx_slider", {
@@ -77,11 +77,26 @@ end, function(scope, events)
 	local slider_holder: ImageButton
 	local label: TextLabel
 	local slider_bar: Frame
-    local props: Props
+	local props: Props
 
 	local function update_visuals(value: number, frac: number)
 		label.Text = string.format("%.3g", value)
 		slider_bar.Position = UDim2.fromScale(frac, 0)
+	end
+
+	local function drag_function(x: number)
+		local diff = x - slider_holder.AbsolutePosition.X
+		local frac = math.clamp(diff / slider_holder.AbsoluteSize.X, 0, 1)
+		local clamped = math.clamp(frac * props.max, props.min, props.max)
+
+		local rounded = math.round(clamped / props.step) * props.step
+		local rounded_frac = rounded / props.max
+
+		slider_bar.Position = UDim2.fromScale(rounded_frac, 0)
+		update_visuals(rounded, rounded_frac)
+		events.changed:fire(rounded)
+
+		return rounded, rounded_frac
 	end
 
 	slider_holder = create("ImageButton")({
@@ -89,12 +104,7 @@ end, function(scope, events)
 		tags = { "nx_slider_holder", "border" },
 		AutoButtonColor = false,
 
-		MouseButton1Down = function(x)
-			local frac = (x - slider_holder.AbsolutePosition.X) / slider_holder.AbsoluteSize.X
-            local value = frac * props.max
-            update_visuals(value, frac)
-            events.changed:fire(value)
-		end,
+		MouseButton1Down = drag_function :: any,
 	})
 
 	label = create("TextLabel")({
@@ -128,7 +138,7 @@ end, function(scope, events)
 	})
 
 	scope.on_updated_props(function(new_props)
-        props = new_props
+		props = new_props
 		assert(props.max >= props.min)
 
 		local clamped = math.clamp(props.value, props.min, props.max)
@@ -138,16 +148,7 @@ end, function(scope, events)
 		update_visuals(props.value, frac)
 
 		drag_detector:SetDragStyleFunction(function(position: Vector2)
-			local diff = position.X - slider_holder.AbsolutePosition.X
-			local frac = math.clamp(diff / slider_holder.AbsoluteSize.X, 0, 1)
-			local clamped = math.clamp(frac * props.max, props.min, props.max)
-
-			local rounded = math.round(clamped / props.step) * props.step
-			local rounded_frac = rounded / props.max
-
-			slider_bar.Position = UDim2.fromScale(rounded_frac, 0)
-			update_visuals(rounded, rounded_frac)
-			events.changed:fire(rounded)
+			local _, rounded_frac = drag_function(position.X)
 
 			return UDim2.fromScale(rounded_frac, 0), 0
 		end)
