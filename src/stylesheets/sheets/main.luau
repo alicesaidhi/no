@@ -5,41 +5,39 @@ local theme = require("./theme")
 
 local rule = define_styles.rule
 
-return define_styles.sheet({
+return {
+	rule("ScreenGui", -10)({
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	}),
+
 	rule("GuiObject", -10)({
 		BorderSizePixel = 0,
 		BackgroundTransparency = 1,
+		AutoLocalize = false,
 	}),
 
-	rule(".container ::UIPadding")({
-		PaddingTop = UDim.new(0, 2),
-		PaddingLeft = UDim.new(0, 2),
-		PaddingRight = UDim.new(0, 2),
-		PaddingBottom = UDim.new(0, 2),
-	}),
-
-	rule(".container ::UIListLayout")({
+	rule(".container ::UIListLayout", -10)({
 		Padding = UDim.new(0, 2),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 	}),
 
-	rule("ScrollingFrame .scrolling")({
+	rule("ScrollingFrame .scrolling", -10)({
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		CanvasSize = UDim2.new(),
 
-		ScrollBarThickness = 6,
+		ScrollBarThickness = 4,
 
 		rule("ScrollingFrame .horizontal")({
 			AutomaticCanvasSize = Enum.AutomaticSize.X,
 		}),
 	}),
 
-	rule(".border ::UIStroke")({
+	rule(".border ::UIStroke", -10)({
 		Color = theme.background(-2),
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 	}),
 
-	rule("TextLabel .nx_label, TextButton .nx_label, TextBox .nx_label")({
+	rule("TextLabel .nx_label, TextButton .nx_label, TextBox .nx_label", -10)({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
 		TextColor3 = theme.text,
@@ -50,7 +48,18 @@ return define_styles.sheet({
 		TextWrapped = true,
 	}),
 
-	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header")({
+	rule("TextLabel .nx_subtext, TextButton .nx_subtext, TextBox .nx_subtext", -10)({
+		AutomaticSize = Enum.AutomaticSize.XY,
+
+		TextColor3 = theme.subtext,
+		TextSize = 10,
+		FontFace = theme.font,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		TextWrapped = true,
+	}),
+
+	rule("TextLabel .nx_header, TextButton .nx_header, TextBox .nx_header", -10)({
 		AutomaticSize = Enum.AutomaticSize.XY,
 
 		TextColor3 = theme.text,
@@ -61,9 +70,13 @@ return define_styles.sheet({
 		TextWrapped = true,
 	}),
 
-	rule("GuiObject .accent")({
+	rule("TextLabel .nx_mono, TextButton .nx_mono, TextBox .nx_mono", -9)({
+		FontFace = theme.monospace,
+	}),
+
+	rule("GuiObject .accent", -10)({
 		BackgroundColor3 = theme.accent(0),
-		BackgroundTransparency = 0,
+		BackgroundTransparency = 0.1,
 
 		rule(">> TextLabel .nx_label, >> TextButton .nx_label")({
 			TextColor3 = theme.accent_text,
@@ -79,7 +92,7 @@ return define_styles.sheet({
 		}),
 	}),
 
-	rule("GuiObject .background")({
+	rule("GuiObject .background", -10)({
 		BackgroundColor3 = theme.background(0),
 		BackgroundTransparency = 0,
 
@@ -89,218 +102,44 @@ return define_styles.sheet({
 		}),
 	}),
 
-	rule(".no_window")({
+	rule(".arrow_down ImageLabel", -10)({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(0, 0),
 
-		rule("::UIListLayout")({
-			SortOrder = Enum.SortOrder.LayoutOrder,
-
-			HorizontalFlex = Enum.UIFlexAlignment.Fill,
-		}),
-
-		rule("::UIShadow")({
-			Spread = UDim2.new(0, 4, 0, 4),
-			BlurRadius = UDim.new(0, 16),
-			Transparency = 0.9,
-		}),
-
-		rule("> GuiObject #container")({
-
-			rule("::UIFlexItem")({
-				FlexMode = Enum.UIFlexMode.Fill,
-			}),
-
-			rule("> GuiObject #children")({
-				Size = UDim2.fromScale(1, 1),
-
-				rule("::UIPadding")({
-					PaddingTop = UDim.new(0, 2),
-					PaddingLeft = UDim.new(0, 2),
-					PaddingRight = UDim.new(0, 2),
-					PaddingBottom = UDim.new(0, 2),
-				}),
-
-				rule("::UIListLayout")({
-					Padding = UDim.new(0, 2),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-				}),
-			}),
-
-			rule("> ImageLabel #resize")({
-				Size = UDim2.fromOffset(16, 16),
-				Position = UDim2.fromScale(1, 1),
-				AnchorPoint = Vector2.new(1, 1),
-
-				ImageColor3 = theme.text,
-			}),
-		}),
-
-		rule("> #header GuiObject")({
-			Size = UDim2.new(1, 0, 0, 20),
-			BackgroundColor3 = theme.background(2),
-			BackgroundTransparency = 0,
-
-			rule("ImageButton")({
-				AutoButtonColor = false,
-			}),
-
-			rule("::UIListLayout")({
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-				HorizontalAlignment = Enum.HorizontalAlignment.Right,
-
-				FillDirection = Enum.FillDirection.Horizontal,
-				HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween,
-			}),
-
-			rule("::UIPadding")({
-				PaddingLeft = UDim.new(0, 2),
-				PaddingRight = UDim.new(0, 2),
-			}),
-
-			rule("> #close ImageButton")({
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-
-				rule("::UIAspectRatioConstraint")({
-					AspectRatio = 1,
-				}),
-
-				rule("> #label ImageLabel")({
-					Size = UDim2.fromScale(0.6, 0.6),
-					Position = UDim2.fromScale(0.5, 0.5),
-					AnchorPoint = Vector2.new(0.5, 0.5),
-
-					ImageColor3 = theme.text,
-					ImageContent = assets["images/close_icon.svg"],
-				}),
-
-				rule("ImageButton :hover")({
-					BackgroundColor3 = Color3.new(),
-					BackgroundTransparency = 0.5,
-
-					rule("::UICorner")({
-						CornerRadius = UDim.new(0, 4),
-					}),
-				}),
-
-				rule("ImageButton :press")({
-					BackgroundColor3 = Color3.fromHex("#ffffff"),
-					BackgroundTransparency = 0.9,
-
-					rule("::UICorner")({
-						CornerRadius = UDim.new(0, 4),
-					}),
-				}),
-
-				rule(":noninteractable > #label ImageLabel")({
-					ImageColor3 = theme.background(-2),
-				}),
-
-				-- rule(":noninteractable")({
-				-- 	TextColor3 = theme.background(-3),
-				-- }),
-			}),
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
 		}),
 	}),
+	rule(".arrow_right ImageLabel", -10)({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(64, 0),
 
-	rule(".nx_button GuiObject")({
-		Size = UDim2.fromOffset(40, 0),
-		AutomaticSize = Enum.AutomaticSize.XY,
-		BackgroundColor3 = theme.background(5),
-		BackgroundTransparency = 0,
-
-		rule("TextButton")({
-			AutoButtonColor = false,
-			TextXAlignment = Enum.TextXAlignment.Center,
-		}),
-
-		rule("::UIPadding")({
-			PaddingLeft = UDim.new(0, 4),
-			PaddingRight = UDim.new(0, 4),
-			PaddingTop = UDim.new(0, 2),
-			PaddingBottom = UDim.new(0, 2),
-		}),
-
-		rule("::UICorner")({
-			CornerRadius = UDim.new(0, 2),
-		}),
-
-		rule("GuiObject :hover")({
-			BackgroundColor3 = theme.background(6),
-		}),
-		rule("GuiObject :press")({
-			BackgroundColor3 = theme.background(3),
-		}),
-
-		rule("GuiObject .accent")({
-			BackgroundColor3 = theme.accent(3),
-
-			rule("GuiObject :hover")({
-				BackgroundColor3 = theme.accent(4),
-			}),
-			rule("GuiObject :press")({
-				BackgroundColor3 = theme.accent(2),
-			}),
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
 		}),
 	}),
+	rule(".arrow_left ImageLabel", -10)({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(172, 0),
 
-	rule(".nx_textbox TextBox")({
-		Size = UDim2.fromOffset(100, 18),
-		PlaceholderColor3 = theme.subtext,
-		TextWrapped = false,
-
-		AutomaticSize = Enum.AutomaticSize.None,
-		ClipsDescendants = true,
-
-		rule(".background TextBox", 10)({
-			BackgroundColor3 = theme.background(-2),
-		}),
-
-		rule(".accent TextBox", 10)({
-			BackgroundColor3 = theme.accent(-3),
-		}),
-
-		rule("::UIPadding")({
-			PaddingLeft = UDim.new(0, 2),
-			PaddingRight = UDim.new(0, 2),
-			PaddingTop = UDim.new(0, 2),
-			PaddingBottom = UDim.new(0, 2),
-		}),
-
-		rule("::UICorner")({
-			CornerRadius = UDim.new(0, 2),
-		}),
-
-		rule(".focused ::UIStroke", 100)({
-			Color = theme.accent(0),
-		}),
-
-		rule("TextBox .multiline")({
-			AutomaticSize = Enum.AutomaticSize.Y,
-			MultiLine = true,
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
 		}),
 	}),
+	rule(".arrow_up ImageLabel", -10)({
+		Size = UDim2.fromScale(1, 1),
+		ImageContent = assets["images/arrow_icons.svg"],
+		ImageRectSize = Vector2.new(64, 64),
+		ImageRectOffset = Vector2.new(128, 0),
 
-	rule(".separator GuiObject")({
-		Size = UDim2.new(1, 0, 0, 12),
-
-		rule("> TextLabel .nx_label")({
-			Position = UDim2.fromOffset(8, 0),
-			TextColor3 = theme.subtext,
-
-			rule("::UIPadding")({
-				PaddingLeft = UDim.new(0, 4),
-				PaddingRight = UDim.new(0, 4),
-			}),
-		}),
-
-		rule("> #decoration GuiObject")({
-			Position = UDim2.new(0, 0, 0.5, 2),
-			Size = UDim2.new(1, 0, 0, 1),
-			AnchorPoint = Vector2.new(0, 0.5),
-
-			BackgroundColor3 = theme.background(4),
-			BackgroundTransparency = 0,
+		rule("::UIAspectRatioConstraint")({
+			AspectRatio = 1,
 		}),
 	}),
 
@@ -461,13 +300,22 @@ return define_styles.sheet({
 		rule("::UICorner")({
 			CornerRadius = UDim.new(0, 4),
 		}),
+
+		rule("TextLabel")({
+			Size = UDim2.fromScale(1, 1),
+            BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center,
+		}),
 	}),
 
 	rule(".nx_slider_bar GuiObject")({
 		Size = UDim2.new(0, 2, 1, 0),
 		BackgroundTransparency = 0,
-		BackgroundColor3 = Color3.new(1, 1, 1),
+		BackgroundColor3 = theme.subtext,
 		AnchorPoint = Vector2.new(0.5, 0),
 		ZIndex = 2,
 	}),
-})
+}

@@ -1,7 +1,7 @@
 local theme_generator = require("../../util/theme_generator")
 
 local background = vector.create(0.1721, 0.005, 0.6)
-local accent = vector.create(0.405, 0.21, 0.71)
+local accent = vector.create(0.355, 0.12, 0.71)
 
 return {
 	background = theme_generator.compute_sequence(background, 0),

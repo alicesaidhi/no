@@ -341,7 +341,7 @@ do
 			local total = buffer.readu8(in_b, at)
 			at += 1
 
-			for i = 1, total do
+			for i = 0, total - 1 do
 				local event_idx = buffer.readu8(in_b, at + i)
 				events[event_idx] = in_unknown[at_unknown]
 				at_unknown += 1

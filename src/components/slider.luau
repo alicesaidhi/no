@@ -15,7 +15,7 @@ local slider = widget_registrar.register("nx_slider", {
 
 return slider.construct(function(props: Props, scope, events)
 	return props, {
-		value = events.changed:poll() :: number,
+		value = (events.changed:poll() or props.value) :: number?,
 	}
 end, function(scope, events)
 	local base = create("Frame")({
@@ -23,19 +23,37 @@ end, function(scope, events)
 		tags = { "nx_slider_base" },
 	})
 
-	local label = create("TextLabel")({
-		Parent = base,
-		LayoutOrder = 2,
+	local slider_holder: ImageButton
+	local label: TextLabel
+	local slider_bar: Frame
+    local props: Props
 
-		tags = { "nx_label" },
-	})
+	local function update_visuals(value: number, frac: number)
+		label.Text = string.format("%.3g", value)
+		slider_bar.Position = UDim2.fromScale(frac, 0)
+	end
 
-	local slider_holder = create("Frame")({
+	slider_holder = create("ImageButton")({
 		Parent = base,
 		tags = { "nx_slider_holder", "border" },
+		AutoButtonColor = false,
+
+		MouseButton1Down = function(x)
+			local frac = (x - slider_holder.AbsolutePosition.X) / slider_holder.AbsoluteSize.X
+            local value = frac * props.max
+            update_visuals(value, frac)
+            events.changed:fire(value)
+		end,
 	})
 
-	local slider_bar = create("Frame")({
+	label = create("TextLabel")({
+		Parent = slider_holder,
+		ZIndex = 5,
+
+		tags = { "nx_label", "nx_slider_holder" },
+	})
+
+	slider_bar = create("Frame")({
 		Parent = slider_holder,
 		tags = { "nx_slider_bar" },
 	})
@@ -58,21 +76,15 @@ end, function(scope, events)
 		DragStyle = Enum.UIDragDetectorDragStyle.Scriptable,
 	})
 
-	local function update(value: number, frac: number)
-		label.Text = string.format("%.3g", value)
-		slider_bar.Position = UDim2.fromScale(frac, 0)
-		events.changed:fire(value)
-	end
-
-	scope.on_updated_props(function(props)
-		print(props.value)
+	scope.on_updated_props(function(new_props)
+        props = new_props
 		assert(props.max >= props.min)
 
 		local clamped = math.clamp(props.value, props.min, props.max)
 		local frac = clamped / props.max
 
 		drag_detector.DragUDim2 = UDim2.fromScale(frac, 0)
-		update(props.value, frac)
+		update_visuals(props.value, frac)
 
 		drag_detector:SetDragStyleFunction(function(position: Vector2)
 			local diff = position.X - slider_holder.AbsolutePosition.X
@@ -83,7 +95,8 @@ end, function(scope, events)
 			local rounded_frac = rounded / props.max
 
 			slider_bar.Position = UDim2.fromScale(rounded_frac, 0)
-			update(rounded, rounded_frac)
+			update_visuals(rounded, rounded_frac)
+			events.changed:fire(rounded)
 
 			return UDim2.fromScale(rounded_frac, 0), 0
 		end)

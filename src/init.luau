@@ -279,13 +279,16 @@ no.base = {
 	label = require("@self/components/label"),
 	header = require("@self/components/header"),
 	window = require("@self/components/window"),
-	button = require("@self/components/basic/button"),
+	button = require("@self/components/button"),
 	input = require("@self/components/input"),
 	separator = require("@self/components/separator"),
 	checkbox = require("@self/components/checkbox"),
 	sameline = require("@self/components/sameline"),
 	tabs = require("@self/components/tabs"),
     slider = require("@self/components/slider"),
+	linechart = require("@self/components/linechart"),
+	collapsible = require("@self/components/collapsible"),
+	tooltip = require("@self/components/tooltip"),
 }
 
 return no

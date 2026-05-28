@@ -12,7 +12,6 @@
 		"luau-lsp.completion.imports.stringRequires.enabled": true,
 		"luau-lsp.completion.imports.requireStyle": "alwaysRelative",
 		"luau-lsp.sourcemap.rojoProjectFile": "default.project.json",
-		"luau-lsp.diagnostics.workspace": true,
 
 		"stylua.targetReleaseVersion": "latest",
 

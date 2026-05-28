@@ -19,6 +19,7 @@ export type WriteScopeBase = {
 	parent_diff: vdom.NodeDiff,
 	incoming_diff: vdom.NodeDiff?,
 	idx: number?,
+	get_state: <T>(T?) -> (T, (T) -> ()),
 }
 
 export type EmitScopeBase<Out> = {

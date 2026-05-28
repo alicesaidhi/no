@@ -1,10 +1,127 @@
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-
 local assets = require("../assets")
 local events = require("../events")
+local stylesheets = require("../stylesheets")
+local define_styles = require("../stylesheets/define_styles")
+local theme = require("../stylesheets/sheets/theme")
 local create = require("../util/create")
 local widget_registrar = require("../widget_registrar")
+
+local rule = define_styles.rule
+
+stylesheets.append_sheet({
+	rule(".nx_window")({
+
+		rule("::UIListLayout")({
+			SortOrder = Enum.SortOrder.LayoutOrder,
+
+			HorizontalFlex = Enum.UIFlexAlignment.Fill,
+		}),
+
+		rule("::UIShadow")({
+			Spread = UDim2.new(0, 4, 0, 4),
+			BlurRadius = UDim.new(0, 16),
+			Transparency = 0.9,
+		}),
+
+		rule("> GuiObject #container")({
+
+			rule("::UIFlexItem")({
+				FlexMode = Enum.UIFlexMode.Fill,
+			}),
+
+			rule("> GuiObject #children")({
+				Size = UDim2.fromScale(1, 1),
+
+				rule("::UIPadding", -10)({
+					PaddingTop = UDim.new(0, 4),
+					PaddingLeft = UDim.new(0, 4),
+					PaddingRight = UDim.new(0, 4),
+					PaddingBottom = UDim.new(0, 4),
+				}),
+			}),
+
+			rule("> ImageLabel #resize")({
+				Size = UDim2.fromOffset(16, 16),
+				Position = UDim2.fromScale(1, 1),
+				AnchorPoint = Vector2.new(1, 1),
+
+				ImageColor3 = theme.text,
+			}),
+		}),
+
+		rule("> #header GuiObject")({
+			Size = UDim2.new(1, 0, 0, 20),
+			BackgroundColor3 = theme.background(2),
+			BackgroundTransparency = 0,
+
+			rule("ImageButton")({
+				AutoButtonColor = false,
+			}),
+
+			rule("GuiObject .accent")({
+				BackgroundColor3 = theme.accent(0),
+			}),
+
+			rule("::UIListLayout")({
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+				HorizontalAlignment = Enum.HorizontalAlignment.Right,
+
+				FillDirection = Enum.FillDirection.Horizontal,
+				HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween,
+			}),
+
+			rule("::UIPadding")({
+				PaddingLeft = UDim.new(0, 4),
+				PaddingRight = UDim.new(0, 2),
+			}),
+
+			rule("> #close ImageButton")({
+				Size = UDim2.fromScale(1, 1),
+				BackgroundTransparency = 1,
+
+				rule("::UIAspectRatioConstraint")({
+					AspectRatio = 1,
+				}),
+
+				rule("> #label ImageLabel")({
+					Size = UDim2.fromScale(0.6, 0.6),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+
+					ImageColor3 = theme.text,
+					ImageContent = assets["images/close_icon.svg"],
+				}),
+
+				rule("ImageButton :hover")({
+					BackgroundColor3 = Color3.new(),
+					BackgroundTransparency = 0.5,
+
+					rule("::UICorner")({
+						CornerRadius = UDim.new(0, 4),
+					}),
+				}),
+
+				rule("ImageButton :press")({
+					BackgroundColor3 = Color3.fromHex("#ffffff"),
+					BackgroundTransparency = 0.9,
+
+					rule("::UICorner")({
+						CornerRadius = UDim.new(0, 4),
+					}),
+				}),
+
+				rule(":noninteractable > #label ImageLabel")({
+					ImageColor3 = theme.background(-2),
+				}),
+
+				-- rule(":noninteractable")({
+				-- 	TextColor3 = theme.background(-3),
+				-- }),
+			}),
+		}),
+	}),
+})
 
 type Properties = { title: string, w: number, h: number, closeable: boolean? }
 
@@ -59,10 +176,10 @@ end, function(scope, events, parent)
 
 	local window: Frame
 	window = create("Frame")({
-		tags = { "no_window", "background", "border" },
+		tags = { "nx_window", "background", "border" },
 
 		Name = `window:{scope.key}`,
-		Position = UDim2.fromOffset(16, 16),
+		Position = UDim2.fromOffset(32, 33),
 
 		create("ImageButton")({
 			Name = "header",
